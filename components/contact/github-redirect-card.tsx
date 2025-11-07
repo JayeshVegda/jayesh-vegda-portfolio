@@ -1,55 +1,69 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { ExternalLink, Github, Heart } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState } from "react";
+import { Icons } from "@/components/common/icons";
+import { Button } from "@/components/ui/button";
+import { MouseBlurEffect } from "@/components/common/mouse-blur-effect";
+import { useMouseTracking } from "@/hooks/use-mouse-tracking";
+import { cn } from "@/lib/utils";
 
 export default function GithubRedirectCard() {
-  const [isHovered, setIsHovered] = useState(false);
+  const { cardRef, isHovering, gradientPosition, handleMouseEnter, handleMouseMove, handleMouseLeave } = useMouseTracking();
 
   return (
-    <Card
-      className="w-full h-fit max-w-sm overflow-hiddenshadow-lg transition-all duration-300 ease-in-out transform hover:scale-102 mt-5"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="relative group"
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
-      <CardContent className="p-8 flex flex-col items-center text-center">
-        <div className="mb-6">
-          <Heart
-            className={`w-12 h-12 transition-colors duration-300 ease-out ${
-              isHovered ? "text-red-500" : "text-muted-foreground"
-            }`}
-          />
+      <div className="relative overflow-hidden rounded-3xl glass-skill-black p-4 md:p-5 w-full h-full">
+        {/* Mouse-following blur effect */}
+        <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
+        
+        <div className="relative z-10 flex flex-col items-center text-center h-full justify-center">
+          <div className="w-10 h-10 rounded-full bg-white/60 dark:bg-black/30 border border-black/10 dark:border-white/10 backdrop-blur-sm flex items-center justify-center mb-3 shadow-sm mx-auto">
+            <Icons.gitHub className="w-5 h-5 text-foreground" />
+          </div>
+          
+          <h2 
+            className="text-lg font-bold text-foreground mb-2"
+            style={{
+              fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Explore My Work
+          </h2>
+          <p 
+            className="text-xs text-muted-foreground leading-relaxed mb-4"
+            style={{
+              fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+            }}
+          >
+            Check out my projects and contributions on GitHub.
+          </p>
+          
+          <Button
+            asChild
+            className={cn(
+              "glass-button rounded-xl h-9 px-5 w-full",
+              "text-foreground font-semibold text-xs",
+              "hover:scale-[1.02] transition-transform"
+            )}
+          >
+            <Link href="https://github.com/jayeshvegda" target="_blank">
+              View GitHub
+              <Icons.externalLink className="ml-2 h-3 w-3" />
+            </Link>
+          </Button>
         </div>
-        <h2 className="font-heading text-xl tracking-tight lg:text-3xl duration-300">
-          Like this template?
-        </h2>
-        <p className="mt-2 mb-10 font-heading text-lg text-muted-foreground">
-          It&#39;s open source. Explore and contribute on GitHub.
-        </p>
-        <Github className="w-10 h-10 text-muted-foreground mb-5" />
-      </CardContent>
-      <CardFooter className="px-8 pb-8 pt-0">
-        <Link
-          href={"https://github.com/namanbarkiya/minimal-next-portfolio"}
-          target="_blank"
-          className={cn(
-            buttonVariants({ variant: "outline" }),
-            "w-full bg-transparent border-2 transition-all duration-300 py-6"
-          )}
-        >
-          <span className="mr-2">Source Code</span>
-          <ExternalLink className="w-5 h-5" />
-        </Link>
-      </CardFooter>
-      <div
-        className={`h-1 bg-gradient-to-r from-red-500 to-red-500 transition-all duration-300 ease-out ${
-          isHovered ? "opacity-100" : "opacity-0"
-        }`}
-      ></div>
-    </Card>
+      </div>
+    </motion.div>
   );
 }

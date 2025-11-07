@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json("Success!");
   } catch (error) {
-    console.log(error);
+    // Log error for debugging in production (consider using a logging service)
     return new NextResponse("Internal error", { status: 500 });
   }
 }

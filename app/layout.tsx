@@ -1,7 +1,7 @@
 import "./globals.css";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Inter as FontSans } from "next/font/google";
+import { Fira_Code, Inter as FontSans } from "next/font/google";
 import localFont from "next/font/local";
 
 import { Analytics } from "@/components/common/analytics";
@@ -14,6 +14,12 @@ import { ModalProvider } from "@/providers/modal-provider";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const fontMono = Fira_Code({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 // Font files can be colocated inside of `pages`
@@ -97,19 +103,19 @@ export const metadata = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_MEASUREMENT_ID;
-  if (!GA_ID) {
-    throw new Error("Missing Google Analytics ID");
-  }
+  const isValidGAId = GA_ID && GA_ID !== "G-XXXXXXXXXX" && GA_ID !== "your_google_analytics_id";
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen font-sans antialiased",
           fontSans.variable,
-          fontHeading.variable
+          fontHeading.variable,
+          fontMono.variable
         )}
+        style={{ background: "transparent" }}
       >
         <ThemeProvider
           attribute="class"
@@ -131,7 +137,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ModalProvider />
         </ThemeProvider>
       </body>
-      <GoogleAnalytics gaId={GA_ID} />
+      {isValidGAId && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }

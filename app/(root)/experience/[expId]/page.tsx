@@ -80,7 +80,7 @@ export default function ExperienceDetailPage({
                   key={idx}
                   className="text-base leading-relaxed flex items-start gap-3"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/30 dark:bg-white/20 border border-white/40 dark:border-white/30 mt-2 flex-shrink-0" />
                   {desc}
                 </li>
               ))}
@@ -104,7 +104,7 @@ export default function ExperienceDetailPage({
                   key={idx}
                   className="text-base leading-relaxed flex items-start gap-3"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/30 dark:bg-white/20 border border-white/40 dark:border-white/30 mt-2 flex-shrink-0" />
                   {achievement}
                 </li>
               ))}
@@ -146,7 +146,7 @@ export default function ExperienceDetailPage({
         </AnimatedSection>
 
         <AnimatedSection delay={0.2}>
-          <Card className="overflow-hidden rounded-lg border bg-background p-2 transition-all duration-300">
+          <Card className="overflow-hidden rounded-2xl p-2 transition-all duration-300">
             <CardHeader className="pb-6">
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -163,10 +163,21 @@ export default function ExperienceDetailPage({
                       </div>
                     )}
                     <div className="flex-1 text-center sm:text-left">
-                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">
+                      <h1 
+                        className="text-xl sm:text-2xl md:text-3xl font-semibold mb-2"
+                        style={{
+                          fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+                          letterSpacing: "-0.02em",
+                        }}
+                      >
                         {experience.position}
                       </h1>
-                      <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                      <div 
+                        className="flex items-center justify-center sm:justify-start gap-2 mb-2"
+                        style={{
+                          fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+                        }}
+                      >
                         <span className="text-md font-medium text-muted-foreground">
                           {experience.company}
                         </span>
@@ -184,10 +195,23 @@ export default function ExperienceDetailPage({
                       <p className="text-muted-foreground">
                         {experience.location}
                       </p>
+                      {experience.experienceLetterUrl && (
+                        <div className="mt-3 flex items-center justify-center sm:justify-start">
+                          <a
+                            href={experience.experienceLetterUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                          >
+                            <Icons.externalLink className="h-4 w-4" />
+                            View Experience Letter
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex justify-center sm:justify-end">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20">
+                    <span className="inline-flex items-center justify-center px-3 py-1.5 rounded-full text-sm font-medium bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/15 backdrop-blur-sm text-foreground/90">
                       {getDurationText(
                         experience.startDate,
                         experience.endDate

@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { motion } from "framer-motion";
 
-import { AnimatedSection } from "@/components/common/animated-section";
+import { MouseBlurEffect } from "@/components/common/mouse-blur-effect";
+import { useMouseTracking } from "@/hooks/use-mouse-tracking";
 import { Icons } from "@/components/common/icons";
 import { Button } from "@/components/ui/button";
 import { ExperienceInterface } from "@/config/experience";
@@ -40,77 +41,135 @@ const Timeline: React.FC<TimelineProps> = ({ experiences }) => {
   return (
     <div className="space-y-4">
       {sortedExperiences.map((experience, index) => (
-        <AnimatedSection
-          key={experience.id}
-          delay={0.1 * (index + 1)}
-          direction="up"
-        >
-          <div className="w-full p-4 sm:p-6 bg-background border border-border rounded-lg transition-all duration-300">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div className="flex items-start gap-4 flex-1 min-w-0">
-                {experience.logo && (
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border-2 border-border overflow-hidden bg-white flex-shrink-0">
-                    <Image
-                      src={experience.logo}
-                      alt={experience.company}
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-contain p-2"
-                    />
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground">
+        <TimelineItem key={experience.id} experience={experience} index={index} />
+      ))}
+    </div>
+  );
+};
+
+function TimelineItem({ experience, index }: { experience: ExperienceInterface; index: number }) {
+  const { cardRef, isHovering, gradientPosition, handleMouseEnter, handleMouseMove, handleMouseLeave } = useMouseTracking();
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
+      className="group relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="relative overflow-hidden rounded-xl glass-skill-black w-full">
+        {/* Mouse-following blur effect */}
+        <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
+        
+        {/* Card content - professional modern layout */}
+        <div className="relative z-10 p-6 w-full">
+          <div className="flex items-start gap-5">
+            {/* Logo - bigger and more prominent */}
+            {experience.logo && (
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 border-black/10 dark:border-white/10 overflow-hidden bg-white/80 dark:bg-black/30 flex-shrink-0 backdrop-blur-sm shadow-md p-3">
+                <Image
+                  src={experience.logo}
+                  alt={experience.company}
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
+            
+            {/* Main content section */}
+            <div className="flex-1 min-w-0 flex flex-col gap-4">
+              {/* Header section */}
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div className="flex-1 min-w-0 space-y-2">
+                  <div className="flex flex-col gap-1">
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
                       {experience.position}
                     </h3>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-primary/10 text-primary border border-primary/20 w-fit">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-base sm:text-lg font-semibold text-foreground/90">
+                        {experience.company}
+                      </span>
+                      {experience.companyUrl && (
+                        <a
+                          href={experience.companyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <Icons.externalLink className="w-4 h-4" />
+                        </a>
+                      )}
+                      <span className="text-sm text-muted-foreground hidden sm:inline">•</span>
+                      <span className="text-sm text-muted-foreground">{experience.location}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border border-black/15 dark:border-white/10 bg-white/70 dark:bg-black/20 text-foreground/90 dark:text-foreground/80 shadow-sm">
                       {getDurationText(
                         experience.startDate,
                         experience.endDate
                       )}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {experience.company}
-                    </span>
-                    {experience.companyUrl && (
+                    {experience.experienceLetterUrl && (
                       <a
-                        href={experience.companyUrl}
+                        href={experience.experienceLetterUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border border-black/15 dark:border-white/10 bg-white/70 dark:bg-black/20 text-foreground/90 dark:text-foreground/80 shadow-sm hover:bg-white/80 dark:hover:bg-black/30 transition-colors"
                       >
-                        <Icons.externalLink className="w-4 h-4" />
+                        Experience Letter
+                        <Icons.externalLink className="ml-1.5 h-3 w-3" />
                       </a>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {experience.location}
-                  </p>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {experience.description[0]}
-                  </p>
+                </div>
+                
+                {/* Action buttons */}
+                <div className="flex-shrink-0">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-xl w-full sm:w-auto"
+                    asChild
+                  >
+                    <Link href={`/experience/${experience.id}`}>
+                      View Details
+                      <Icons.chevronRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-lg w-full sm:w-auto"
-                asChild
-              >
-                <Link href={`/experience/${experience.id}`}>
-                  View Details
-                  <Icons.chevronRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              
+              {/* Description section */}
+              <div className="pt-1">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {experience.description[0]}
+                </p>
+              </div>
+              
+              {/* Skills section - limit to 6 skills max */}
+              <div className="flex flex-wrap gap-2 pt-1">
+                {experience.skills.slice(0, 6).map((skill, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border border-black/10 dark:border-white/5 bg-white/60 dark:bg-black/10 text-foreground/80 dark:text-muted-foreground shadow-sm"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-        </AnimatedSection>
-      ))}
-    </div>
+        </div>
+      </div>
+    </motion.div>
   );
-};
+}
 
 export default Timeline;

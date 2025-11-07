@@ -60,7 +60,18 @@ export type ValidSkills =
   | "FastAPI"
   | "SQL"
   | "NoSQL"
-  | "Framer Motion";
+  | "Framer Motion"
+  | "Problem Solving"
+  | "Mongoose"
+  | "Cloudinary"
+  | "JWT"
+  | "Mantine"
+  | "BeautifulSoup"
+  | "C++"
+  | "Flask-RESTful"
+  | "Flask-Limiter"
+  | "BeautifulSoup4"
+  | "Vercel";
 
 export type ValidCategory =
   | "Full Stack"

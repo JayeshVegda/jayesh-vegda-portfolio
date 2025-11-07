@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import { Norican } from "next/font/google";
 import Link from "next/link";
-import { usePathname, useSelectedLayoutSegment } from "next/navigation";
-import * as React from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Icons } from "@/components/common/icons";
 import { MobileNav } from "@/components/common/mobile-nav";
@@ -23,79 +23,98 @@ const norican = Norican({
   display: "swap",
 });
 
-// Animation variants for the navigation items
 const navItemVariants = {
-  hidden: { opacity: 0, y: -20 },
+  hidden: { opacity: 0, y: -10 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
-      delay: 0.1 * i,
-      duration: 0.5,
+      delay: 0.05 * i,
+      duration: 0.4,
       ease: "easeOut",
     },
   }),
 };
 
 export function MainNav({ items, children }: MainNavProps) {
-  const segment = useSelectedLayoutSegment();
-  const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false);
   const pathname = usePathname();
+  const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setShowMobileMenu(false);
   }, [pathname]);
 
   return (
-    <div className="flex gap-6 md:gap-10">
+    <div className="flex flex-1 items-center gap-6 relative z-10">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex items-center"
       >
-        <Link href="/" className="hidden items-center space-x-2 md:flex">
-          <span className={cn(norican.className, "text-2xl")}>
+        <Link
+          href="/"
+          className="hidden items-center space-x-2 rounded-xl px-4 py-2 text-foreground transition hover:opacity-80 md:flex"
+        >
+          <span className={cn(norican.className, "text-2xl leading-none")}> 
             {siteConfig.authorName}
           </span>
         </Link>
       </motion.div>
+
       {items?.length ? (
-        <nav className="hidden gap-6 md:flex items-center">
-          {items?.map((item, index) => (
-            <motion.div
-              key={index}
-              custom={index}
-              initial="hidden"
-              animate="visible"
-              variants={navItemVariants}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link
-                href={item.disabled ? "#" : item.href}
-                className={cn(
-                  "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm",
-                  item.href.startsWith(`/${segment}`)
-                    ? "text-foreground"
-                    : "text-foreground/60",
-                  item.disabled && "cursor-not-allowed opacity-80"
-                )}
+        <nav className="hidden flex-1 items-center justify-center gap-2 md:flex">
+          {items.map((item, index) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+
+            return (
+              <motion.div
+                key={item.href ?? index}
+                custom={index}
+                initial="hidden"
+                animate="visible"
+                variants={navItemVariants}
+                className="relative"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
               >
-                {item.title}
-              </Link>
-            </motion.div>
-          ))}
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-active-pill"
+                    className="absolute inset-0 rounded-xl bg-white/8 backdrop-blur-sm"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
+                )}
+                <Link
+                  href={item.disabled ? "#" : item.href}
+                  className={cn(
+                    "relative z-10 inline-flex items-center px-4 py-2 text-sm font-medium transition-colors",
+                    isActive
+                      ? "text-foreground"
+                      : "text-foreground/70 hover:text-foreground"
+                  )}
+                >
+                  {item.title}
+                </Link>
+              </motion.div>
+            );
+          })}
         </nav>
       ) : null}
+
       <motion.button
-        className="flex items-center space-x-2 md:hidden"
+        className="md:hidden inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-foreground transition hover:opacity-80"
         onClick={() => setShowMobileMenu(!showMobileMenu)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
         {showMobileMenu ? <Icons.close /> : <Icons.menu />}
-        <span className="font-bold">Menu</span>
+        <span>Menu</span>
       </motion.button>
+
       {showMobileMenu && items && (
         <MobileNav items={items}>{children}</MobileNav>
       )}

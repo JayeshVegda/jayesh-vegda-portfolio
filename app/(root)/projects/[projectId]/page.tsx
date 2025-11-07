@@ -10,7 +10,6 @@ import CustomTooltip from "@/components/ui/custom-tooltip";
 import { Projects } from "@/config/projects";
 import { siteConfig } from "@/config/site";
 import { cn, formatDateFromObj } from "@/lib/utils";
-import profileImg from "@/public/profile-img.jpg";
 
 interface ProjectPageProps {
   params: {
@@ -18,7 +17,7 @@ interface ProjectPageProps {
   };
 }
 
-const githubUsername = "namanbarkiya";
+const githubUsername = "jayeshvegda";
 
 export default function Project({ params }: ProjectPageProps) {
   let project = Projects.find((val) => val.id === params.projectId);
@@ -45,7 +44,13 @@ export default function Project({ params }: ProjectPageProps) {
         >
           {formatDateFromObj(project.startDate)}
         </time>
-        <h1 className="flex items-center justify-between mt-2 font-heading text-4xl leading-tight lg:text-5xl">
+        <h1 
+          className="flex items-center justify-between mt-2 text-4xl leading-tight lg:text-5xl font-semibold"
+          style={{
+            fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+            letterSpacing: "-0.02em",
+          }}
+        >
           {project.companyName}
           <div className="flex items-center">
             {project.githubLink && (
@@ -70,16 +75,12 @@ export default function Project({ params }: ProjectPageProps) {
             href={siteConfig.links.github}
             className="flex items-center space-x-2 text-sm"
           >
-            <Image
-              src={profileImg}
-              alt={"naman"}
-              width={42}
-              height={42}
-              className="rounded-full bg-background"
-            />
+            <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-sm">
+              <Icons.user className="w-5 h-5 text-foreground" />
+            </div>
 
             <div className="flex-1 text-left leading-tight">
-              <p className="font-medium">{"Naman Barkiya"}</p>
+              <p className="font-medium">{"Jayesh Vegda"}</p>
               <p className="text-[12px] text-muted-foreground">
                 @{siteConfig.username}
               </p>
@@ -93,19 +94,31 @@ export default function Project({ params }: ProjectPageProps) {
         alt={project.companyName}
         width={720}
         height={405}
-        className="my-8 rounded-md border bg-muted transition-colors"
+        className="my-8 rounded-xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-md transition-colors"
         priority
       />
 
       <div className="mb-7 ">
-        <h2 className="inline-block font-heading text-3xl leading-tight lg:text-3xl mb-2">
+        <h2 
+          className="inline-block text-3xl leading-tight lg:text-3xl mb-2 font-semibold"
+          style={{
+            fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+            letterSpacing: "-0.02em",
+          }}
+        >
           Tech Stack
         </h2>
         <ChipContainer textArr={project.techStack} />
       </div>
 
       <div className="mb-7 ">
-        <h2 className="inline-block font-heading text-3xl leading-tight lg:text-3xl mb-2">
+        <h2 
+          className="inline-block text-3xl leading-tight lg:text-3xl mb-2 font-semibold"
+          style={{
+            fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+            letterSpacing: "-0.02em",
+          }}
+        >
           Description
         </h2>
         {/* {<project.descriptionComponent />} */}
@@ -116,12 +129,24 @@ export default function Project({ params }: ProjectPageProps) {
       </div>
 
       <div className="mb-7 ">
-        <h2 className="inline-block font-heading text-3xl leading-tight lg:text-3xl mb-5">
+        <h2 
+          className="inline-block text-3xl leading-tight lg:text-3xl mb-5 font-semibold"
+          style={{
+            fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+            letterSpacing: "-0.02em",
+          }}
+        >
           Page Info
         </h2>
         {project.pagesInfoArr.map((page, ind) => (
           <div key={ind}>
-            <h3 className="flex items-center font-heading text-xl leading-tight lg:text-xl mt-3">
+            <h3 
+              className="flex items-center text-xl leading-tight lg:text-xl mt-3 font-semibold"
+              style={{
+                fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+                letterSpacing: "-0.01em",
+              }}
+            >
               <Icons.star className="h-5 w-5 mr-2" /> {page.title}
             </h3>
             <div>
@@ -133,7 +158,7 @@ export default function Project({ params }: ProjectPageProps) {
                   alt={img}
                   width={720}
                   height={405}
-                  className="my-4 rounded-md border bg-muted transition-colors"
+                  className="my-4 rounded-xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-md transition-colors"
                   priority
                 />
               ))}

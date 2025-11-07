@@ -26,23 +26,38 @@ const textVariants = {
   }),
 };
 
+const motionComponents = {
+  h1: motion.h1,
+  h2: motion.h2,
+  h3: motion.h3,
+  h4: motion.h4,
+  h5: motion.h5,
+  h6: motion.h6,
+  p: motion.p,
+  span: motion.span,
+  div: motion.div,
+};
+
 export const AnimatedText = ({
   children,
   delay = 0,
   className = "",
   as = "div",
 }: AnimatedTextProps) => {
-  const Component = motion[as];
+  const MotionComponent = motionComponents[as] || motion.div;
 
   return (
-    <Component
+    <MotionComponent
       initial="hidden"
       animate="visible"
       custom={delay}
       variants={textVariants}
       className={className}
+      style={{
+        fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
+      }}
     >
       {children}
-    </Component>
+    </MotionComponent>
   );
 };

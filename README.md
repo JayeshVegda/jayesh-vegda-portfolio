@@ -1,21 +1,22 @@
-# Next.js 14 Developer Portfolio Template
+# Jayesh Vegda - Portfolio Website
 
-A modern, responsive, and SEO-optimized **Next.js 14 portfolio template** designed for developers, designers, and professionals. This open-source project helps you showcase your skills, experience, and projects with an elegant interface that stands out. Built with server-side rendering, TypeScript, and the latest web standards for optimal performance.
+A modern, responsive, and SEO-optimized **Next.js 14 portfolio website** showcasing my skills, experience, and projects. Built with server-side rendering, TypeScript, and the latest web standards for optimal performance. Features an Apple-inspired glassmorphism design with smooth animations and a fully responsive layout.
 
 ## ✨ Key Features
 
-- **Professional Experience Timeline**: Showcase your career journey with a visually appealing timeline
-- **Project Showcase**: Display your technical projects with detailed information and live demos
-- **Dark/Light Mode**: Professional appearance with theme support
-- **Responsive Design**: Optimized for all devices (mobile, tablet, desktop)
-- **100% Performance Score**: Fully optimized for speed and Core Web Vitals
+- **Apple-Inspired Glassmorphism Design**: Modern, minimalist UI with liquid glass effects
+- **Professional Experience Timeline**: Showcase career journey with an interactive timeline
+- **Project Showcase**: Display technical projects with detailed information and live demos
+- **Skills Section**: Categorized skills with proficiency ratings and visual indicators
+- **Stats & Achievements**: Showcase LeetCode, GitHub, and ACIOJOB statistics
+- **Contributions**: Highlight open-source contributions and side projects
+- **Multiple Themes**: Dark, light, and custom themes with smooth transitions
+- **Responsive Design**: Fully optimized for all devices (mobile, tablet, desktop)
 - **SEO-Ready**: Structured data, meta tags, and optimized content
-- **Modern Tech Stack**: Next.js 14, TypeScript, Tailwind CSS, and shadcn/ui
-- **Easy Customization**: Well-organized code structure with minimal effort required
-- **Animations**: Subtle animations for engaging user experience
-- **Analytics Integration**: Ready for Google Analytics tracking
-- **Contact Form**: Functional contact form with validation
-- **Open Source**: Free to use and modify for your personal portfolio
+- **Modern Tech Stack**: Next.js 14, TypeScript, Tailwind CSS, Framer Motion
+- **Smooth Animations**: Engaging micro-interactions and scroll animations
+- **Contact Form**: Functional contact form with Google Forms integration
+- **Performance Optimized**: Built for speed and excellent Core Web Vitals
 
 ## 🚀 Demo
 
@@ -35,16 +36,20 @@ https://github.com/namanbarkiya/minimal-next-portfolio/assets/82203888/f93bf5ca-
 
 ## 🔧 Getting Started
 
-To get started with your own portfolio website:
+To get started with this portfolio:
 
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/namanbarkiya/minimal-next-portfolio.git my-portfolio
-   cd my-portfolio
+   git clone https://github.com/jayeshvegda/minimal-next-portfolio.git
+   cd minimal-next-portfolio
    ```
 
-2. Copy the contents of `.env.copy` to a new `.env` file and fill in the required information.
+2. Copy the `.env.example` file to `.env` and fill in the required information:
+
+   ```bash
+   cp .env.example .env
+   ```
 
 3. Install dependencies:
 
@@ -68,71 +73,71 @@ To get started with your own portfolio website:
 
 5. Open [http://localhost:3000](http://localhost:3000) in your web browser to see the website.
 
-## 🎨 Customization
+## 🎨 Project Structure
 
-The portfolio is designed to be easily customizable:
+The project is well-organized for easy customization:
 
-1. **Personal Information**: Update your personal info in `config/site.ts`
-2. **Skills**: Add your skills in `config/skills.ts`
-3. **Projects**: Add your technical projects in `config/projects.ts`
-4. **Experience**: Customize your professional experience in `config/experience.ts`
-5. **Contributions**: Showcase your contributions in `config/contributions.ts`
-6. **Colors & Theme**: Modify the theme in `tailwind.config.js`
+- **Personal Information**: Update in `config/site.ts`
+- **Skills**: Configure in `config/skills.ts`
+- **Projects**: Add projects in `config/projects.ts`
+- **Experience**: Update in `config/experience.ts`
+- **Contributions**: Add in `config/contributions.ts`
+- **Stats**: Configure in `config/stats.ts`
+- **Styling**: Modify themes in `tailwind.config.js` and `app/globals.css`
 
-## 🌟 Features In Detail
+## 🛠️ Tech Stack Details
 
-### Professional Experience Timeline
+- **Framework**: Next.js 14 with App Router
+- **Language**: TypeScript for type safety
+- **Styling**: Tailwind CSS with custom glassmorphism utilities
+- **Animations**: Framer Motion for smooth animations
+- **UI Components**: Custom components with Radix UI primitives
+- **Form Handling**: React Hook Form with Zod validation
+- **Icons**: React Icons (Lucide, Simple Icons)
+- **Analytics**: Vercel Analytics integration
 
-An interactive, animated timeline that showcases your career journey with expandable sections for details about each position and company.
+## 📱 Performance
 
-### Project Showcase
+This portfolio is optimized for:
 
-Display your technical projects with detailed information, technologies used, live demo links, and comprehensive project descriptions.
-
-### Skills Showcase
-
-Visually represent your technical and soft skills with customizable ratings and categories.
-
-### Contact Form Integration
-
-A ready-to-use contact form that can connect to various backend services.
-
-### SEO Optimization
-
-Built-in SEO features with proper meta tags, structured data, and semantic HTML.
-
-## 📱 Performance and Responsiveness
-
-![best-portfolio-website-score](https://github.com/namanbarkiya/minimal-next-portfolio/assets/82203888/3fb9c94d-9d99-4e98-92ea-14aadc91b568)
-![100-score-vercel](https://github.com/namanbarkiya/minimal-next-portfolio/assets/82203888/7cfe28cc-b619-4199-9dab-1cf16723b86d)
-
-This template is optimized for:
-
-- 100% Lighthouse score
-- Excellent Core Web Vitals metrics
+- Excellent Lighthouse scores
+- Fast loading times with image optimization
 - Responsive design across all device sizes
-- Fast loading times with proper image optimization
+- Optimized Core Web Vitals metrics
+- Efficient code splitting and lazy loading
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is available under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgements
 
-- Design inspired by modern portfolio best practices
-- Built by [Naman Barkiya](https://github.com/namanbarkiya)
-- Icons from [Lucide](https://lucide.dev/)
+- Design inspired by Apple's liquid glass aesthetic
+- Built with Next.js, Tailwind CSS, and Framer Motion
+- Icons from [Lucide](https://lucide.dev/) and [React Icons](https://react-icons.github.io/react-icons/)
 
-## 💻 Deploy on Vercel
+## 💻 Deployment
 
-The easiest way to deploy your portfolio is using [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), the platform from the creators of Next.js.
+This portfolio can be easily deployed on:
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **[Vercel](https://vercel.com)** (Recommended) - Optimized for Next.js
+- **Netlify** - Great alternative with similar features
+- **Any Node.js hosting** - Follow Next.js deployment guides
 
-## 🌟 Star History
+### Deploy to Vercel
 
-[![Star History Chart](https://api.star-history.com/svg?repos=namanbarkiya/minimal-next-portfolio&type=Date)](https://star-history.com/#namanbarkiya/minimal-next-portfolio&Date)
+1. Push your code to GitHub
+2. Import your repository on [Vercel](https://vercel.com/new)
+3. Add your environment variables
+4. Deploy!
+
+## 📧 Contact
+
+- **Portfolio**: [jayeshvegda.dev](https://jayeshvegda.dev)
+- **GitHub**: [@jayeshvegda](https://github.com/jayeshvegda)
+- **LinkedIn**: [Jayesh Vegda](https://www.linkedin.com/in/jayeshvegda/)
+- **Email**: Available through the contact form on the website
 
 ---
 
-**Built with ❤️ by [Naman Barkiya](https://github.com/namanbarkiya)**
+**Built with ❤️ by [Jayesh Vegda](https://github.com/jayeshvegda)**

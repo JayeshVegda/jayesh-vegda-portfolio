@@ -1,7 +1,22 @@
 {
-  "name": "minimal-portfolio",
-  "version": "0.1.0",
+  "name": "jayesh-vegda-portfolio",
+  "version": "1.0.0",
   "private": true,
+  "description": "Modern portfolio website for Jayesh Vegda - Full Stack Developer",
+  "author": "Jayesh Vegda",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jayeshvegda/minimal-next-portfolio.git"
+  },
+  "keywords": [
+    "portfolio",
+    "next.js",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "glassmorphism",
+    "developer-portfolio"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,9 +34,8 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.4",
     "@radix-ui/react-tooltip": "^1.0.6",
-    "@sendgrid/mail": "^7.7.0",
+    "@sendgrid/mail": "^8.1.6",
     "@tailwindcss/line-clamp": "^0.4.4",
-    "@types/node": "20.4.5",
     "@types/react": "18.2.18",
     "@types/react-dom": "18.2.7",
     "@vercel/analytics": "^1.0.2",
@@ -35,7 +49,7 @@
     "next": "^14.1.0",
     "next-themes": "^0.2.1",
     "nodemailer": "^6.9.4",
-    "postcss": "8.4.27",
+    "postcss": "^8.5.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
@@ -49,6 +63,7 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@types/node": "^24.10.0",
     "@types/nodemailer": "^6.4.9",
     "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.1.0"
