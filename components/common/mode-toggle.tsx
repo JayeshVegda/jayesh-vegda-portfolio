@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 import { Icons } from "@/components/common/icons";
@@ -14,18 +15,50 @@ import {
 
 export function ModeToggle() {
   const { setTheme, theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="sm" className="h-8 w-8 px-0">
+        <Icons.sun className="h-4 w-4" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    );
+  }
+
+  // Determine which icon to show based on current theme
+  const getThemeIcon = () => {
+    switch (theme) {
+      case "dark":
+        return <Icons.moon className="h-4 w-4 transition-all" />;
+      case "retro":
+        return <Icons.retro className="h-4 w-4 transition-all" />;
+      case "cyberpunk":
+        return <Icons.cyberpunk className="h-4 w-4 transition-all" />;
+      case "paper":
+        return <Icons.paper className="h-4 w-4 transition-all" />;
+      case "aurora":
+        return <Icons.aurora className="h-4 w-4 transition-all" />;
+      case "synthwave":
+        return <Icons.synthwave className="h-4 w-4 transition-all" />;
+      case "system":
+        return <Icons.laptop className="h-4 w-4 transition-all" />;
+      case "light":
+      default:
+        return <Icons.sun className="h-4 w-4 transition-all" />;
+    }
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 px-0">
-          <Icons.sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 cyberpunk:scale-0 retro:scale-0 paper:scale-0 aurora:scale-0 synthwave:scale-0" />
-          <Icons.moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 cyberpunk:scale-0 retro:scale-0 paper:scale-0 aurora:scale-0 synthwave:scale-0" />
-          <Icons.retro className="absolute rotate-90 scale-0 transition-all retro:rotate-0 retro:scale-100" />
-          <Icons.cyberpunk className="absolute rotate-90 scale-0 transition-all cyberpunk:rotate-0 cyberpunk:scale-100" />
-          <Icons.paper className="absolute rotate-90 scale-0 transition-all paper:rotate-0 paper:scale-100" />
-          <Icons.aurora className="absolute rotate-90 scale-0 transition-all aurora:rotate-0 aurora:scale-100" />
-          <Icons.synthwave className="absolute rotate-90 scale-0 transition-all synthwave:rotate-0 synthwave:scale-100" />
+        <Button variant="ghost" size="sm" className="h-8 w-8 px-0 relative">
+          {getThemeIcon()}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>

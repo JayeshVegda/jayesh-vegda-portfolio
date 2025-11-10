@@ -51,11 +51,11 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index = 0 }
         <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
         
         {/* Card content - professional modern layout */}
-        <div className="relative z-10 p-6 w-full">
-          <div className="flex items-start gap-5">
+        <div className="relative z-10 p-4 md:p-6 w-full">
+          <div className="flex items-start gap-3 md:gap-5">
             {/* Logo - bigger and more prominent */}
             {experience.logo && (
-              <div className="w-20 h-20 rounded-xl border-2 border-black/10 dark:border-white/10 overflow-hidden bg-white/80 dark:bg-black/30 flex-shrink-0 backdrop-blur-sm shadow-md p-3">
+              <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl border-2 border-black/10 dark:border-white/10 overflow-hidden bg-white/80 dark:bg-black/30 flex-shrink-0 backdrop-blur-sm shadow-md p-2 md:p-3">
                 <Image
                   src={experience.logo}
                   alt={experience.company}
@@ -67,16 +67,16 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index = 0 }
             )}
             
             {/* Main content section */}
-            <div className="flex-1 min-w-0 flex flex-col gap-4">
+            <div className="flex-1 min-w-0 flex flex-col gap-3 md:gap-4">
               {/* Header section */}
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="flex-1 min-w-0 space-y-2">
                   <div className="flex flex-col gap-1">
-                    <h3 className="text-xl font-bold text-foreground leading-tight">
+                    <h3 className="text-lg md:text-xl font-bold text-foreground leading-tight">
                       {experience.position}
                     </h3>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-base font-semibold text-foreground/90">
+                    <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
+                      <span className="text-sm md:text-base font-semibold text-foreground/90">
                         {experience.company}
                       </span>
                       {experience.companyUrl && (
@@ -86,15 +86,15 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index = 0 }
                           rel="noopener noreferrer"
                           className="text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <Icons.externalLink className="w-4 h-4" />
+                          <Icons.externalLink className="w-3.5 h-3.5 md:w-4 md:h-4" />
                         </a>
                       )}
-                      <span className="text-sm text-muted-foreground hidden sm:inline">•</span>
-                      <span className="text-sm text-muted-foreground">{experience.location}</span>
+                      <span className="text-xs md:text-sm text-muted-foreground hidden sm:inline">•</span>
+                      <span className="text-xs md:text-sm text-muted-foreground">{experience.location}</span>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border border-black/15 dark:border-white/10 bg-white/70 dark:bg-black/20 text-foreground/90 dark:text-foreground/80 shadow-sm">
+                  <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
+                    <span className="inline-flex items-center px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-semibold border border-black/15 dark:border-white/10 bg-white/70 dark:bg-black/20 text-foreground/90 dark:text-foreground/80 shadow-sm">
                       {getDurationText(experience.startDate, experience.endDate)}
                     </span>
                     {experience.experienceLetterUrl && (
@@ -102,26 +102,28 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index = 0 }
                         href={experience.experienceLetterUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border border-black/15 dark:border-white/10 bg-white/70 dark:bg-black/20 text-foreground/90 dark:text-foreground/80 shadow-sm hover:bg-white/80 dark:hover:bg-black/30 transition-colors"
+                        className="inline-flex items-center px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-semibold border border-black/15 dark:border-white/10 bg-white/70 dark:bg-black/20 text-foreground/90 dark:text-foreground/80 shadow-sm hover:bg-white/80 dark:hover:bg-black/30 transition-colors"
                       >
-                        Experience Letter
-                        <Icons.externalLink className="ml-1.5 h-3 w-3" />
+                        <span className="hidden sm:inline">Experience Letter</span>
+                        <span className="sm:hidden">Letter</span>
+                        <Icons.externalLink className="ml-1 md:ml-1.5 h-3 w-3" />
                       </a>
                     )}
                   </div>
                 </div>
                 
                 {/* Action buttons */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 w-full sm:w-auto">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-xl"
+                    className="rounded-xl w-full sm:w-auto text-xs md:text-sm"
                     asChild
                   >
                     <Link href={`/experience/${experience.id}`}>
-                      View Details
-                      <Icons.chevronRight className="ml-2 h-4 w-4" />
+                      <span className="hidden sm:inline">View Details</span>
+                      <span className="sm:hidden">Details</span>
+                      <Icons.chevronRight className="ml-1.5 md:ml-2 h-3.5 w-3.5 md:h-4 md:w-4" />
                     </Link>
                   </Button>
                 </div>
@@ -129,17 +131,17 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index = 0 }
               
               {/* Description section */}
               <div className="pt-1">
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-none">
                   {experience.description[0]}
                 </p>
               </div>
               
               {/* Skills section - limit to 6 skills max */}
-              <div className="flex flex-wrap gap-2 pt-1">
+              <div className="flex flex-wrap gap-1.5 md:gap-2 pt-1">
                 {experience.skills.slice(0, 6).map((skill, idx) => (
                   <span
                     key={idx}
-                    className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border border-black/10 dark:border-white/5 bg-white/60 dark:bg-black/10 text-foreground/80 dark:text-muted-foreground shadow-sm"
+                    className="inline-flex items-center px-2 md:px-3 py-1 md:py-1.5 rounded-md text-xs font-medium border border-black/10 dark:border-white/5 bg-white/60 dark:bg-black/10 text-foreground/80 dark:text-muted-foreground shadow-sm"
                   >
                     {skill}
                   </span>

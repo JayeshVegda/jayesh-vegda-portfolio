@@ -5,6 +5,7 @@ import { useModalStore } from "@/hooks/use-modal-store";
 
 export const CustomModal = () => {
   const modalStore = useModalStore();
+  const IconComponent = modalStore.icon;
 
   return (
     <Modal
@@ -14,7 +15,11 @@ export const CustomModal = () => {
       onClose={modalStore.onClose}
     >
       <div className="flex flex-col justify-center items-center gap-3 md:flex-row pb-2">
-        <modalStore.icon />
+        {IconComponent && (
+          <div className="flex-shrink-0">
+            <IconComponent />
+          </div>
+        )}
         <div className="flex flex-col justify-center items-center md:items-start">
           <h1 className="font-heading text-2xl sm:text-3xl md:text-3xl lg:text-4xl">
             {modalStore.title}

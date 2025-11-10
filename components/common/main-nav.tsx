@@ -4,10 +4,7 @@ import { motion } from "framer-motion";
 import { Norican } from "next/font/google";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
-import { Icons } from "@/components/common/icons";
-import { MobileNav } from "@/components/common/mobile-nav";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
@@ -38,25 +35,20 @@ const navItemVariants = {
 
 export function MainNav({ items, children }: MainNavProps) {
   const pathname = usePathname();
-  const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
-
-  useEffect(() => {
-    setShowMobileMenu(false);
-  }, [pathname]);
 
   return (
-    <div className="flex flex-1 items-center gap-6 relative z-10">
+    <div className="flex flex-1 items-center justify-between gap-3 md:gap-6 relative z-10">
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center"
+        className="flex items-center flex-shrink-0"
       >
         <Link
           href="/"
-          className="hidden items-center space-x-2 rounded-xl px-4 py-2 text-foreground transition hover:opacity-80 md:flex"
+          className="flex items-center space-x-2 rounded-xl px-2 py-1.5 md:px-4 md:py-2 text-foreground transition hover:opacity-80"
         >
-          <span className={cn(norican.className, "text-2xl leading-none")}> 
+          <span className={cn(norican.className, "text-xl md:text-2xl leading-none")}> 
             {siteConfig.authorName}
           </span>
         </Link>
@@ -104,20 +96,6 @@ export function MainNav({ items, children }: MainNavProps) {
           })}
         </nav>
       ) : null}
-
-      <motion.button
-        className="md:hidden inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-foreground transition hover:opacity-80"
-        onClick={() => setShowMobileMenu(!showMobileMenu)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {showMobileMenu ? <Icons.close /> : <Icons.menu />}
-        <span>Menu</span>
-      </motion.button>
-
-      {showMobileMenu && items && (
-        <MobileNav items={items}>{children}</MobileNav>
-      )}
     </div>
   );
 }

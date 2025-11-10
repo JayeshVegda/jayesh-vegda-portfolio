@@ -1,16 +1,19 @@
+"use client";
+
 import { Norican } from "next/font/google";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import * as React from "react";
 
-import { MouseBlurEffect } from "@/components/common/mouse-blur-effect";
-import { useMouseTracking } from "@/hooks/use-mouse-tracking";
 import { siteConfig } from "@/config/site";
 import { useLockBody } from "@/hooks/use-lock-body";
 import { cn } from "@/lib/utils";
+import { Icons } from "@/components/common/icons";
 
 interface MobileNavProps {
   items: any[];
   children?: React.ReactNode;
+  onClose: () => void;
 }
 
 const norican = Norican({
@@ -20,53 +23,144 @@ const norican = Norican({
   display: "swap",
 });
 
-export function MobileNav({ items, children }: MobileNavProps) {
+export function MobileNav({ items, children, onClose }: MobileNavProps) {
+  const pathname = usePathname();
   useLockBody();
-
-  const {
-    cardRef,
-    isHovering,
-    gradientPosition,
-    handleMouseEnter,
-    handleMouseMove,
-    handleMouseLeave,
-  } = useMouseTracking();
 
   return (
     <div
-      className={cn(
-        "fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto bg-black/50 px-6 pb-32 pt-6 backdrop-blur-xl animate-in slide-in-from-top-10 md:hidden"
-      )}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        maxWidth: "100vw",
+        maxHeight: "100vh",
+        zIndex: 99999,
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        overflow: "hidden",
+      }}
+      onClick={onClose}
     >
       <div
-        ref={cardRef}
-        className="relative z-20 grid gap-6 rounded-2xl glass-skill-black p-6 text-foreground shadow-[0_25px_60px_rgba(15,23,42,0.35)]"
-        onMouseEnter={handleMouseEnter}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          maxWidth: "100%",
+          maxHeight: "100%",
+          backgroundColor: "rgba(255, 255, 255, 0.98)",
+          padding: "1.5rem",
+          paddingTop: "4rem",
+          paddingBottom: "2rem",
+          boxSizing: "border-box",
+          overflowY: "auto",
+          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+        onClick={(e) => e.stopPropagation()}
       >
-        <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: "1rem",
+            right: "1rem",
+            padding: "0.75rem",
+            backgroundColor: "transparent",
+            border: "none",
+            cursor: "pointer",
+            minWidth: "44px",
+            minHeight: "44px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10,
+          }}
+          aria-label="Close menu"
+        >
+          <Icons.close className="w-6 h-6" />
+        </button>
 
-        <Link href="/" className="flex items-center space-x-2">
-          <span className={cn(norican.className, "text-2xl")}>
+        {/* Logo */}
+        <Link
+          href="/"
+          onClick={onClose}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "2rem",
+            paddingRight: "3rem",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          <span className={cn(norican.className, "text-2xl font-normal")}>
             {siteConfig.authorName}
           </span>
         </Link>
-        <nav className="grid grid-flow-row auto-rows-max text-sm gap-2">
-          {items.map((item, index) => (
-            <Link
-              key={index}
-              href={item.disabled ? "#" : item.href}
-              className={cn(
-                "relative flex w-full items-center rounded-xl px-4 py-3 text-sm font-medium text-foreground/80 transition hover:bg-white/5",
-                item.disabled && "cursor-not-allowed opacity-60"
-              )}
-            >
-              {item.title}
-            </Link>
-          ))}
+
+        {/* Navigation items */}
+        <nav style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: "0.75rem", 
+          width: "100%",
+          flex: 1,
+        }}>
+          {items.map((item, index) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+
+            return (
+              <Link
+                key={index}
+                href={item.disabled ? "#" : item.href}
+                onClick={onClose}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  padding: "1.25rem 1.5rem",
+                  borderRadius: "0.75rem",
+                  backgroundColor: isActive ? "rgba(0, 0, 0, 0.1)" : "transparent",
+                  color: "inherit",
+                  textDecoration: "none",
+                  fontSize: "1.1rem",
+                  fontWeight: isActive ? 600 : 500,
+                  minHeight: "52px",
+                  transition: "background-color 0.2s",
+                }}
+              >
+                {item.title}
+              </Link>
+            );
+          })}
         </nav>
-        {children}
+
+        {/* Children (like theme toggle) */}
+        {children && (
+          <div
+            style={{
+              marginTop: "auto",
+              paddingTop: "2rem",
+              borderTop: "1px solid rgba(0, 0, 0, 0.1)",
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              paddingBottom: "1rem",
+            }}
+          >
+            {children}
+          </div>
+        )}
       </div>
     </div>
   );

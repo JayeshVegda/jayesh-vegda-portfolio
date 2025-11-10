@@ -47,7 +47,7 @@ export function VSCodeHero() {
       {/* Main content container */}
       <motion.div
         style={{ y: glassY, opacity }}
-        className="container relative z-10 px-4 py-16 md:py-24 lg:py-28"
+        className="container relative z-10 px-3 md:px-4 py-12 md:py-16 lg:py-24 xl:py-28 -mt-[10%]"
       >
         <div className="mx-auto w-full max-w-5xl">
           {/* Central glass card */}
@@ -89,11 +89,11 @@ export function VSCodeHero() {
                   scale,
                   transformStyle: "preserve-3d",
                 }}
-                className="relative rounded-3xl border border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-[20px] shadow-2xl p-10 md:p-16 lg:p-20 overflow-hidden will-change-transform"
+                className="relative rounded-2xl md:rounded-3xl border border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-[20px] shadow-2xl p-6 md:p-10 lg:p-16 xl:p-20 overflow-hidden will-change-transform"
               >
               {/* Mouse-following blur effect on background */}
               <div
-                className="absolute inset-0 rounded-3xl pointer-events-none transition-all duration-300 ease-out"
+                className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none transition-all duration-300 ease-out"
                 style={{
                   background: `radial-gradient(circle 400px at ${mousePosition.x}% ${mousePosition.y}%, rgba(255, 255, 255, 0.15) 0%, transparent 50%)`,
                   filter: "blur(60px)",
@@ -102,7 +102,7 @@ export function VSCodeHero() {
               />
               
               {/* Inner glow */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
 
                 {/* Specular glare that follows the mouse */}
                 <div
@@ -115,13 +115,13 @@ export function VSCodeHero() {
                 />
               
               {/* Content */}
-              <div className="relative z-10 flex flex-col items-center text-center space-y-6">
+              <div className="relative z-10 flex flex-col items-center text-center space-y-4 md:space-y-6">
                 {/* Name with minimal effects */}
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                  className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-foreground tracking-tight"
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-bold text-foreground tracking-tight"
                   style={{
                     fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
                     letterSpacing: "-0.02em",
@@ -136,7 +136,7 @@ export function VSCodeHero() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.5 }}
-                  className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground/90 max-w-5xl leading-relaxed md:whitespace-nowrap"
+                  className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-muted-foreground/90 max-w-5xl leading-relaxed px-2"
                   style={{
                     fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
                     letterSpacing: "-0.01em",
@@ -154,7 +154,7 @@ export function VSCodeHero() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.7 }}
-                  className="flex flex-wrap items-center justify-center gap-3 mt-4"
+                  className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mt-2 md:mt-4 px-2"
                 >
                   {["React", "Node.js", "MongoDB", "Express"].map((tech, i) => (
                     <motion.span
@@ -168,7 +168,7 @@ export function VSCodeHero() {
                         boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 rounded-full text-sm font-medium bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground/90 cursor-pointer transition-all duration-300"
+                      className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground/90 cursor-pointer transition-all duration-300"
                     >
                       {tech}
                     </motion.span>
@@ -180,7 +180,7 @@ export function VSCodeHero() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className="flex flex-wrap items-center justify-center gap-4 mt-8"
+                  className="flex flex-wrap items-center justify-center gap-3 md:gap-4 mt-4 md:mt-8 px-2"
                 >
                   <motion.div
                     whileHover={{ scale: 1.05, y: -2 }}
@@ -191,7 +191,7 @@ export function VSCodeHero() {
                       href={siteConfig.links.github}
                       target="_blank"
                       aria-label="View GitHub profile"
-                      className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 font-medium text-sm shadow-lg hover:shadow-xl relative overflow-hidden"
+                      className="group inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 font-medium text-xs md:text-sm shadow-lg hover:shadow-xl relative overflow-hidden"
                     >
                       <motion.div
                         className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -202,7 +202,7 @@ export function VSCodeHero() {
                           whileHover={{ rotate: [0, -10, 10, -10, 0] }}
                           transition={{ duration: 0.5 }}
                         >
-                          <GitHubIcon className="h-5 w-5 relative z-10" />
+                          <GitHubIcon className="h-4 w-4 md:h-5 md:w-5 relative z-10" />
                         </motion.div>
                       )}
                       <span className="relative z-10">GitHub</span>
@@ -217,13 +217,13 @@ export function VSCodeHero() {
                       href="/Jayesh_s_Resume.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 font-medium text-sm shadow-lg hover:shadow-xl relative overflow-hidden"
+                      className="group inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 font-medium text-xs md:text-sm shadow-lg hover:shadow-xl relative overflow-hidden"
                     >
                       <motion.div
                         className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         initial={false}
                       />
-                      {PageIcon && <PageIcon className="h-4 w-4 relative z-10" />}
+                      {PageIcon && <PageIcon className="h-3.5 w-3.5 md:h-4 md:w-4 relative z-10" />}
                       <span className="relative z-10">Resume</span>
                     </a>
                   </motion.div>
@@ -234,13 +234,13 @@ export function VSCodeHero() {
                   >
                     <a
                       href="tel:+919510233829"
-                      className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 font-medium text-sm shadow-lg hover:shadow-xl relative overflow-hidden"
+                      className="group inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 font-medium text-xs md:text-sm shadow-lg hover:shadow-xl relative overflow-hidden"
                     >
                       <motion.div
                         className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         initial={false}
                       />
-                      {ContactIcon && <ContactIcon className="h-4 w-4 relative z-10" />}
+                      {ContactIcon && <ContactIcon className="h-3.5 w-3.5 md:h-4 md:w-4 relative z-10" />}
                       <span className="relative z-10">Contact</span>
                     </a>
                   </motion.div>
@@ -255,19 +255,19 @@ export function VSCodeHero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="mt-12 flex justify-center"
+            className="mt-8 md:mt-12 flex justify-center"
           >
             <Link
               href="#skills"
               aria-label="Scroll to skills"
-              className="inline-flex flex-col items-center gap-2 text-sm text-muted-foreground/70 hover:text-foreground/90 transition-colors"
+              className="inline-flex flex-col items-center gap-2 text-xs md:text-sm text-muted-foreground/70 hover:text-foreground/90 transition-colors"
             >
               <span className="text-xs font-medium tracking-wider uppercase">Scroll</span>
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
               >
-                {Icons?.chevronDown && <Icons.chevronDown className="h-5 w-5" />}
+                {Icons?.chevronDown && <Icons.chevronDown className="h-4 w-4 md:h-5 md:w-5" />}
               </motion.div>
             </Link>
           </motion.div>

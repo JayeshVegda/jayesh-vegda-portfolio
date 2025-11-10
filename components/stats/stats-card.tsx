@@ -59,10 +59,10 @@ function StatItemCard({ stat, index }: { stat: StatItem; index: number }) {
       <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
       
       {/* Card content */}
-      <div className="relative z-10 p-6 h-full flex flex-col gap-4">
-        <div className="flex items-center gap-4">
+      <div className="relative z-10 p-4 md:p-6 h-full flex flex-col gap-3 md:gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
           <div 
-            className={`flex items-center justify-center w-12 h-12 rounded-xl shrink-0 backdrop-blur-sm shadow-sm ${
+            className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl shrink-0 backdrop-blur-sm shadow-sm ${
               stat.platform.toLowerCase() === 'github' 
                 ? 'bg-white/70 dark:bg-white/10 border border-black/10 dark:border-white/10' 
                 : stat.platform.toLowerCase() === 'aciojob'
@@ -75,35 +75,35 @@ function StatItemCard({ stat, index }: { stat: StatItem; index: number }) {
             } : {}}
           >
             {stat.platform.toLowerCase() === 'github' ? (
-              <Icon className="h-6 w-6 text-foreground dark:text-white" />
+              <Icon className="h-5 w-5 md:h-6 md:w-6 text-foreground dark:text-white" />
             ) : stat.platform.toLowerCase() === 'aciojob' ? (
               <Image 
                 src="/acciojob.svg" 
                 alt="ACIOJOB" 
                 width={24} 
                 height={24} 
-                className="h-6 w-6 object-contain"
+                className="h-5 w-5 md:h-6 md:w-6 object-contain"
               />
             ) : (
-              <Icon className="h-6 w-6" style={stat.color ? { color: stat.color } : { color: 'inherit' }} />
+              <Icon className="h-5 w-5 md:h-6 md:w-6" style={stat.color ? { color: stat.color } : { color: 'inherit' }} />
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-foreground uppercase tracking-wide">
+            <h3 className="text-base md:text-lg font-bold text-foreground uppercase tracking-wide">
               {stat.platform}
             </h3>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-4xl font-bold text-foreground">
+        <div className="space-y-1 md:space-y-2">
+          <p className="text-3xl md:text-4xl font-bold text-foreground">
             {stat.value}
           </p>
-          <p className="text-base font-semibold text-foreground/90">
+          <p className="text-sm md:text-base font-semibold text-foreground/90">
             {stat.label}
           </p>
           {stat.description && (
-            <p className="text-sm text-muted-foreground/70 mt-1">
+            <p className="text-xs md:text-sm text-muted-foreground/70 mt-1">
               {stat.description}
             </p>
           )}
@@ -178,18 +178,18 @@ function AchievementContent({
       <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
       
       {/* Card content */}
-      <div className="relative z-10 p-5 h-full flex flex-col gap-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-foreground mb-2">
+      <div className="relative z-10 p-4 md:p-5 h-full flex flex-col gap-2 md:gap-3">
+        <div className="flex items-start justify-between gap-2 md:gap-3">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base md:text-lg font-semibold text-foreground mb-1 md:mb-2">
               {achievement.title}
             </h3>
-            <p className="text-sm text-muted-foreground/90 leading-relaxed">
+            <p className="text-xs md:text-sm text-muted-foreground/90 leading-relaxed">
               {achievement.description}
             </p>
           </div>
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl shrink-0 backdrop-blur-sm bg-white/70 dark:bg-black/20 border border-black/10 dark:border-white/10 shadow-sm">
-            <Icons.star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+          <div className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-xl shrink-0 backdrop-blur-sm bg-white/70 dark:bg-black/20 border border-black/10 dark:border-white/10 shadow-sm">
+            <Icons.star className="h-4 w-4 md:h-5 md:w-5 text-yellow-500 fill-yellow-500" />
           </div>
         </div>
         {achievement.date && (

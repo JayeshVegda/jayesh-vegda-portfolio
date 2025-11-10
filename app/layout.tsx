@@ -115,7 +115,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontHeading.variable,
           fontMono.variable
         )}
-        style={{ background: "transparent" }}
       >
         <ThemeProvider
           attribute="class"

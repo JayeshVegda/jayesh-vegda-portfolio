@@ -80,20 +80,20 @@ function SkillCardItem({ skill, index }: { skill: SkillItem; index: number }) {
         <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
         
         {/* Card content */}
-        <div className="relative z-10 p-5 h-full flex flex-col gap-4">
+        <div className="relative z-10 p-4 md:p-5 h-full flex flex-col gap-3 md:gap-4">
           {/* Header with icon and name */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <div 
-              className="flex items-center justify-center w-12 h-12 rounded-xl shrink-0 backdrop-blur-sm border border-black/10 dark:border-white/10 bg-white/60 dark:bg-black/40 shadow-sm"
+              className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl shrink-0 backdrop-blur-sm border border-black/10 dark:border-white/10 bg-white/60 dark:bg-black/40 shadow-sm"
             >
               <IconComp 
-                size={24} 
+                className="w-5 h-5 md:w-6 md:h-6"
                 style={{ color: brandColor }}
               />
             </div>
             <div className="flex-1 min-w-0">
               <h3
-                className="text-lg font-semibold text-foreground truncate"
+                className="text-base md:text-lg font-semibold text-foreground truncate"
                 style={{
                   fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
                   letterSpacing: "-0.01em",
@@ -106,7 +106,7 @@ function SkillCardItem({ skill, index }: { skill: SkillItem; index: number }) {
 
           {/* Description */}
           <p
-            className="text-sm text-muted-foreground/90 leading-relaxed line-clamp-2 flex-1"
+            className="text-xs md:text-sm text-muted-foreground/90 leading-relaxed line-clamp-2 flex-1"
             style={{
               fontFamily: "var(--font-sans), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
             }}
@@ -116,7 +116,7 @@ function SkillCardItem({ skill, index }: { skill: SkillItem; index: number }) {
 
           {/* Rating */}
           <div className="flex items-center justify-between pt-2 border-t border-white/5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2">
               <Rating stars={skill.rating} />
               <span className="text-xs text-muted-foreground/70 font-medium">
                 {skill.rating}/5

@@ -18,7 +18,7 @@ export default function ContributionCard({
   showTechStack = true,
 }: ContributionCardProps) {
   return (
-    <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {contributions.map((contribution, id) => (
         <ContributionCardItem key={id} contribution={contribution} index={id} showTechStack={showTechStack} />
       ))}
@@ -55,25 +55,25 @@ function ContributionCardItem({
           <MouseBlurEffect isHovering={isHovering} gradientPosition={gradientPosition} />
           
           {/* Card content */}
-          <div className="relative z-10 p-6 h-full flex flex-col justify-between">
-            <div className="flex flex-row justify-between items-start mb-4">
-              <h3 className="font-bold flex space-x-2 items-center text-foreground">
-                <Icons.gitRepoIcon size={20} />
-                <span className="truncate">{contribution.repo}</span>
+          <div className="relative z-10 p-4 md:p-6 h-full flex flex-col justify-between gap-3 md:gap-4">
+            <div className="flex flex-row justify-between items-start gap-2 mb-2 md:mb-4">
+              <h3 className="font-bold flex space-x-1.5 md:space-x-2 items-center text-foreground min-w-0 flex-1">
+                <Icons.gitRepoIcon size={18} className="md:w-5 md:h-5 flex-shrink-0" />
+                <span className="truncate text-sm md:text-base">{contribution.repo}</span>
               </h3>
-              <Icons.gitBranch size={20} className="text-muted-foreground flex-shrink-0" />
+              <Icons.gitBranch size={18} className="md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
             </div>
             
-            <div className="space-y-4 flex-1">
-              <p className="text-sm text-muted-foreground leading-relaxed">
+            <div className="space-y-3 md:space-y-4 flex-1">
+              <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-3">
                 {contribution.contibutionDescription}
               </p>
-              <p className="text-sm text-muted-foreground flex space-x-2 items-center">
-                <Icons.gitOrgBuilding size={15} />
-                <span>{contribution.repoOwner}</span>
+              <p className="text-xs md:text-sm text-muted-foreground flex space-x-1.5 md:space-x-2 items-center">
+                <Icons.gitOrgBuilding size={14} className="md:w-[15px] md:h-[15px] flex-shrink-0" />
+                <span className="truncate">{contribution.repoOwner}</span>
               </p>
               {showTechStack && contribution.techStack && contribution.techStack.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-2">
+                <div className="flex flex-wrap gap-1.5 pt-1 md:pt-2">
                   {contribution.techStack.slice(0, 4).map((tech, idx) => (
                     <span
                       key={idx}
@@ -92,8 +92,8 @@ function ContributionCardItem({
             </div>
             
             <Icons.externalLink
-              size={35}
-              className="absolute bottom-4 right-4 border border-white/10 bg-black/20 backdrop-blur-sm rounded-full p-2 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+              size={30}
+              className="absolute bottom-3 right-3 md:bottom-4 md:right-4 md:w-[35px] md:h-[35px] border border-white/10 bg-black/20 backdrop-blur-sm rounded-full p-1.5 md:p-2 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
             />
           </div>
         </div>
