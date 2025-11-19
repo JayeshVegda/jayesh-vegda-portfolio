@@ -71,7 +71,14 @@ export type ValidSkills =
   | "Flask-RESTful"
   | "Flask-Limiter"
   | "BeautifulSoup4"
-  | "Vercel";
+  | "DOM Injection"
+  | "CSS"
+  | "JSON Prompts"
+  | "Local LLM Integration"
+  | "JavaScript"
+  | "TypeScript"
+  | "Vite"
+  | "TailwindCSS";
 
 export type ValidCategory =
   | "Full Stack"
@@ -80,7 +87,9 @@ export type ValidCategory =
   | "UI/UX"
   | "Web Dev"
   | "Mobile Dev"
-  | "3D Modeling";
+  | "3D Modeling"
+  | "Privacy"
+  | "Security";
 
 export type ValidExpType = "Personal" | "Professional";
 

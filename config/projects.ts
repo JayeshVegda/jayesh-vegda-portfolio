@@ -142,7 +142,7 @@ export const Projects: ProjectInterface[] = [
     shortDescription: "A client-side privacy tool that automatically detects and masks sensitive data before sharing text with LLMs using real-time pattern detection and modern UI.",
     websiteLink: "https://secret-guard-ai.vercel.app/",
     githubLink: "https://github.com/JayeshVegda/SecretGuard",
-    techStack: ["React","TypeScript","Vite","TailwindCSS",""],
+    techStack: ["React","TypeScript","Vite","TailwindCSS"],
     startDate: new Date("2025-10-01"),
     endDate: new Date("2025-11-16"),
     companyLogoImg: " https://secret-guard-nu.vercel.app/favicon.svg",
