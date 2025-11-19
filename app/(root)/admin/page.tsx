@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,11 +39,39 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
+  const loadAllData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const headers = { "x-admin-password": adminPassword };
+
+      const [projRes, expRes, skillsRes, contrRes, siteRes, socialsRes] = await Promise.all([
+        fetch("/api/admin/projects", { headers }),
+        fetch("/api/admin/experience", { headers }),
+        fetch("/api/admin/skills", { headers }),
+        fetch("/api/admin/contributions", { headers }),
+        fetch("/api/admin/site", { headers }),
+        fetch("/api/admin/socials", { headers }),
+      ]);
+
+      setProjects(await projRes.json());
+      setExperiences(await expRes.json());
+      setSkills(await skillsRes.json());
+      setContributions(await contrRes.json());
+      setSite(await siteRes.json());
+      setSocials(await socialsRes.json());
+
+      setMessage({ text: "Data loaded successfully", type: "success" });
+    } catch (error) {
+      setMessage({ text: "Failed to load data", type: "error" });
+    }
+    setLoading(false);
+  }, [adminPassword]);
+
   useEffect(() => {
-    if (authenticated) {
+    if (authenticated && adminPassword) {
       loadAllData();
     }
-  }, [authenticated]);
+  }, [authenticated, adminPassword, loadAllData]);
 
   useEffect(() => {
     if (message) {
@@ -70,34 +98,6 @@ export default function AdminPage() {
       }
     } catch (error) {
       setMessage({ text: "Authentication failed", type: "error" });
-    }
-    setLoading(false);
-  };
-
-  const loadAllData = async () => {
-    setLoading(true);
-    try {
-      const headers = { "x-admin-password": adminPassword };
-
-      const [projRes, expRes, skillsRes, contrRes, siteRes, socialsRes] = await Promise.all([
-        fetch("/api/admin/projects", { headers }),
-        fetch("/api/admin/experience", { headers }),
-        fetch("/api/admin/skills", { headers }),
-        fetch("/api/admin/contributions", { headers }),
-        fetch("/api/admin/site", { headers }),
-        fetch("/api/admin/socials", { headers }),
-      ]);
-
-      setProjects(await projRes.json());
-      setExperiences(await expRes.json());
-      setSkills(await skillsRes.json());
-      setContributions(await contrRes.json());
-      setSite(await siteRes.json());
-      setSocials(await socialsRes.json());
-
-      setMessage({ text: "Data loaded successfully", type: "success" });
-    } catch (error) {
-      setMessage({ text: "Failed to load data", type: "error" });
     }
     setLoading(false);
   };
@@ -357,7 +357,7 @@ function DataView({ type, data, onEdit, onDelete, onSubmit }: any) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         <p className="text-lg">No {type} found</p>
-        <p className="text-sm mt-2">Click "Add New" to create your first entry</p>
+        <p className="text-sm mt-2">Click &quot;Add New&quot; to create your first entry</p>
       </div>
     );
   }
@@ -631,7 +631,7 @@ function FormContent({ type, data, onSubmit, loading }: any) {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-2 block">End Date (or 'Present')</label>
+                <label className="text-sm font-medium mb-2 block">End Date (or &apos;Present&apos;)</label>
                 <Input value={formData.endDate || ""} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} />
               </div>
             </div>

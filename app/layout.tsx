@@ -4,12 +4,12 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Fira_Code, Inter as FontSans } from "next/font/google";
 import localFont from "next/font/local";
 
-import { Analytics } from "@/components/common/analytics";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { ModalProvider } from "@/providers/modal-provider";
+import { Analytics } from "@vercel/analytics/next";
 
 const fontSans = FontSans({
   subsets: ["latin"],
