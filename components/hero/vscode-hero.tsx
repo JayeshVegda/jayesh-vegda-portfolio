@@ -214,7 +214,7 @@ export function VSCodeHero() {
                     transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   >
                     <a
-                      href="/Jayesh_s_Resume.pdf"
+                      href="/Jayesh_Vegda_Final_Resume.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 rounded-xl bg-white/10 dark:bg-white/5 border border-white/20 backdrop-blur-sm text-foreground hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 font-medium text-xs md:text-sm shadow-lg hover:shadow-xl relative overflow-hidden"
