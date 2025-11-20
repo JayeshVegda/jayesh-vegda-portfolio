@@ -289,7 +289,7 @@ export default function AdminPage() {
                   {writeStatus.message}
                 </p>
                 <div className="text-xs text-amber-600 dark:text-amber-400 space-y-1">
-                  <p><strong>To enable writes on Vercel:</strong> Set <code className="bg-amber-100 dark:bg-amber-900/30 px-1 py-0.5 rounded">ALLOW_FILE_WRITES=true</code> in Vercel environment variables (changes won't persist).</p>
+                  <p><strong>To enable writes on Vercel:</strong> Set <code className="bg-amber-100 dark:bg-amber-900/30 px-1 py-0.5 rounded">ALLOW_FILE_WRITES=true</code> in Vercel environment variables (changes won&apos;t persist).</p>
                   <p><strong>Recommended:</strong> Use the admin panel locally, commit changes to Git, then deploy to Vercel.</p>
                 </div>
               </div>

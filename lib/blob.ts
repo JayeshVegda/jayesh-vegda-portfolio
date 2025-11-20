@@ -39,10 +39,10 @@ export async function uploadImageToBlob(
     return {
       url: blob.url,
       pathname: blob.pathname,
-      contentType: blob.contentType,
-      contentDisposition: blob.contentDisposition,
-      size: blob.size,
-      uploadedAt: blob.uploadedAt,
+      contentType: blob.contentType || file.type || 'image/png',
+      contentDisposition: blob.contentDisposition || 'inline',
+      size: file.size, // Use file size since PutBlobResult doesn't include size
+      uploadedAt: new Date(), // Use current date since PutBlobResult doesn't include uploadedAt
     };
   } catch (error: any) {
     if (error instanceof BlobAccessError) {
