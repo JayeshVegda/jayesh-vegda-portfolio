@@ -39,6 +39,10 @@ Minimal Next Portfolio is a modern, animated portfolio template built with Next.
 ![SendGrid](https://img.shields.io/badge/SendGrid-0085CA?logo=sendgrid&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
 
+## Demo
+
+https://github.com/user-attachments/assets/e3cdad5e-5239-40a3-b482-f5b17ee58292
+
 ## Installation
 
 ```bash
@@ -62,9 +66,7 @@ npm run start
 - Update content under `config/*.ts` (projects, skills, socials, site metadata).
 - Drop resume or media assets into `public/` and update references as needed.
 
-## Demo
 
-https://github.com/user-attachments/assets/e3cdad5e-5239-40a3-b482-f5b17ee58292
 
 ## Folder Structure
 
