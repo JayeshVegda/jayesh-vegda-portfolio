@@ -145,7 +145,7 @@ export const Projects: ProjectInterface[] = [
     techStack: ["React","TypeScript","Vite","TailwindCSS"],
     startDate: new Date("2025-10-01"),
     endDate: new Date("2025-11-16"),
-    companyLogoImg: " https://secret-guard-nu.vercel.app/favicon.svg",
+    companyLogoImg: "",
     pagesInfoArr: [
 
     ],

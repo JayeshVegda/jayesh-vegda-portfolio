@@ -1,8 +1,126 @@
 import fs from "fs/promises";
 import path from "path";
 
+// Cache the serverless check result to avoid repeated checks
+let serverlessCheckCache: boolean | null = null;
+
+// Check if we're in a serverless environment (Vercel, etc.)
+const isServerless = async (): Promise<boolean> => {
+  // Return cached result if available
+  if (serverlessCheckCache !== null) {
+    return serverlessCheckCache;
+  }
+
+  // Check environment variables first (fastest check)
+  // Vercel always sets these in production/preview
+  const hasVercelEnv = 
+    process.env.VERCEL === '1' || 
+    process.env.VERCEL_URL !== undefined ||
+    process.env.VERCEL_REGION !== undefined ||
+    process.env.VERCEL_ENV === 'production' ||
+    process.env.VERCEL_ENV === 'preview';
+
+  // If explicitly allowed, permit writes
+  if (process.env.ALLOW_FILE_WRITES === 'true') {
+    serverlessCheckCache = false;
+    return false;
+  }
+
+  // If Vercel environment detected, it's serverless
+  if (hasVercelEnv) {
+    serverlessCheckCache = true;
+    return true;
+  }
+
+  // Check for AWS Lambda
+  if (process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined) {
+    serverlessCheckCache = true;
+    return true;
+  }
+
+  // Check process.cwd() for serverless paths
+  const cwd = process.cwd();
+  const isServerlessPath = 
+    cwd.startsWith('/var/task') ||
+    (cwd === '/' && process.env.NODE_ENV === 'production') ||
+    (process.platform !== 'win32' && !cwd.includes('/') && cwd.length > 0);
+
+  if (isServerlessPath && process.env.NODE_ENV === 'production') {
+    serverlessCheckCache = true;
+    return true;
+  }
+
+  // For production environments, do a quick filesystem write test as a final check
+  // This catches cases where env vars aren't set but filesystem is read-only
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      const testPath = path.join(cwd, '.serverless-check');
+      try {
+        await fs.writeFile(testPath, Date.now().toString(), { flag: 'w' });
+        await fs.unlink(testPath).catch(() => {}); // Clean up, ignore errors
+        // Write succeeded, not serverless
+        serverlessCheckCache = false;
+        return false;
+      } catch (writeError: any) {
+        // EROFS = Read-only file system, EACCES = Permission denied
+        // ENOENT on write means parent directory doesn't exist (likely serverless)
+        if (writeError.code === 'EROFS' || writeError.code === 'EACCES') {
+          serverlessCheckCache = true;
+          return true;
+        }
+        // For other errors, if we're in production without explicit permission, assume serverless
+        serverlessCheckCache = true;
+        return true;
+      }
+    } catch {
+      // If test fails completely, assume serverless in production
+      serverlessCheckCache = true;
+      return true;
+    }
+  }
+
+  // Default to false for local development
+  serverlessCheckCache = false;
+  return false;
+};
+
+// Custom error class for serverless write errors
+class ServerlessWriteError extends Error {
+  code = 'SERVERLESS_WRITE_DISABLED';
+  
+  constructor(message: string) {
+    super(message);
+    this.name = 'ServerlessWriteError';
+  }
+}
+
 // Write projects config
 export async function writeProjectsConfig(projects: any[]): Promise<void> {
+  // In serverless environments, file writes aren't supported
+  if (await isServerless()) {
+    const errorMessage = 
+      'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+      'Please update config files manually via Git or use a database for runtime updates. ' +
+      'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.';
+    
+    console.error('Serverless environment detected:', {
+      VERCEL: process.env.VERCEL,
+      VERCEL_ENV: process.env.VERCEL_ENV,
+      NODE_ENV: process.env.NODE_ENV,
+      cwd: process.cwd(),
+    });
+    
+    throw new ServerlessWriteError(errorMessage);
+  }
+
+  // Ensure the config directory exists
+  const configDir = path.join(process.cwd(), "config");
+  try {
+    await fs.access(configDir);
+  } catch {
+    await fs.mkdir(configDir, { recursive: true });
+  }
+
   const filePath = path.join(process.cwd(), "config/projects.ts");
   const imports = `import { ValidCategory, ValidExpType, ValidSkills } from "./constants";
 
@@ -82,11 +200,40 @@ ${projectsCode}
 export const featuredProjects = Projects.filter(p => p.id !== "thronelang").slice(0, 3);
 `;
 
-  await fs.writeFile(filePath, content, "utf-8");
+  // Attempt write with error handling for read-only filesystems
+  try {
+    await fs.writeFile(filePath, content, "utf-8");
+  } catch (writeError: any) {
+    // If write fails due to read-only filesystem, throw our custom error
+    if (writeError.code === 'EROFS' || writeError.code === 'EACCES' || writeError.code === 'ENOENT') {
+      throw new ServerlessWriteError(
+        'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+        'Please update config files manually via Git or use a database for runtime updates. ' +
+        'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+      );
+    }
+    // Re-throw other errors
+    throw writeError;
+  }
 }
 
 // Write experience config
 export async function writeExperienceConfig(experiences: any[]): Promise<void> {
+  if (await isServerless()) {
+    throw new ServerlessWriteError(
+      'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+      'Please update config files manually via Git or use a database for runtime updates. ' +
+      'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+    );
+  }
+
+  const configDir = path.join(process.cwd(), "config");
+  try {
+    await fs.access(configDir);
+  } catch {
+    await fs.mkdir(configDir, { recursive: true });
+  }
+
   const filePath = path.join(process.cwd(), "config/experience.ts");
   const imports = `import { ValidSkills } from "./constants";
 
@@ -133,11 +280,38 @@ ${experiencesCode}
 ];
 `;
 
-  await fs.writeFile(filePath, content, "utf-8");
+  // Attempt write with error handling for read-only filesystems
+  try {
+    await fs.writeFile(filePath, content, "utf-8");
+  } catch (writeError: any) {
+    if (writeError.code === 'EROFS' || writeError.code === 'EACCES' || writeError.code === 'ENOENT') {
+      throw new ServerlessWriteError(
+        'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+        'Please update config files manually via Git or use a database for runtime updates. ' +
+        'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+      );
+    }
+    throw writeError;
+  }
 }
 
 // Write skills config
 export async function writeSkillsConfig(skills: any[]): Promise<void> {
+  if (await isServerless()) {
+    throw new ServerlessWriteError(
+      'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+      'Please update config files manually via Git or use a database for runtime updates. ' +
+      'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+    );
+  }
+
+  const configDir = path.join(process.cwd(), "config");
+  try {
+    await fs.access(configDir);
+  } catch {
+    await fs.mkdir(configDir, { recursive: true });
+  }
+
   const filePath = path.join(process.cwd(), "config/skills.ts");
   const imports = `export type SkillCategory = "Core Stack" | "DevOps & Productivity Tools" | "Professional Skills";
 
@@ -186,11 +360,38 @@ export const coreSkills = skills.filter((skill) => skill.category === "Core Stac
 export const featuredSkills = skills.slice(0, 6);
 `;
 
-  await fs.writeFile(filePath, content, "utf-8");
+  // Attempt write with error handling for read-only filesystems
+  try {
+    await fs.writeFile(filePath, content, "utf-8");
+  } catch (writeError: any) {
+    if (writeError.code === 'EROFS' || writeError.code === 'EACCES' || writeError.code === 'ENOENT') {
+      throw new ServerlessWriteError(
+        'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+        'Please update config files manually via Git or use a database for runtime updates. ' +
+        'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+      );
+    }
+    throw writeError;
+  }
 }
 
 // Write contributions config
 export async function writeContributionsConfig(contributions: any[]): Promise<void> {
+  if (await isServerless()) {
+    throw new ServerlessWriteError(
+      'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+      'Please update config files manually via Git or use a database for runtime updates. ' +
+      'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+    );
+  }
+
+  const configDir = path.join(process.cwd(), "config");
+  try {
+    await fs.access(configDir);
+  } catch {
+    await fs.mkdir(configDir, { recursive: true });
+  }
+
   const filePath = path.join(process.cwd(), "config/contributions.ts");
   const imports = `import { ValidSkills } from "./constants";
 
@@ -224,20 +425,74 @@ export const featuredContributions: contributionsInterface[] =
   contributionsUnsorted.slice(0, 3);
 `;
 
-  await fs.writeFile(filePath, content, "utf-8");
+  // Attempt write with error handling for read-only filesystems
+  try {
+    await fs.writeFile(filePath, content, "utf-8");
+  } catch (writeError: any) {
+    if (writeError.code === 'EROFS' || writeError.code === 'EACCES' || writeError.code === 'ENOENT') {
+      throw new ServerlessWriteError(
+        'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+        'Please update config files manually via Git or use a database for runtime updates. ' +
+        'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+      );
+    }
+    throw writeError;
+  }
 }
 
 // Write site config
 export async function writeSiteConfig(site: any): Promise<void> {
+  if (await isServerless()) {
+    throw new ServerlessWriteError(
+      'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+      'Please update config files manually via Git or use a database for runtime updates. ' +
+      'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+    );
+  }
+
+  const configDir = path.join(process.cwd(), "config");
+  try {
+    await fs.access(configDir);
+  } catch {
+    await fs.mkdir(configDir, { recursive: true });
+  }
+
   const filePath = path.join(process.cwd(), "config/site.ts");
   const content = `export const siteConfig = ${JSON.stringify(site, null, 2)};
 `;
 
-  await fs.writeFile(filePath, content, "utf-8");
+  // Attempt write with error handling for read-only filesystems
+  try {
+    await fs.writeFile(filePath, content, "utf-8");
+  } catch (writeError: any) {
+    if (writeError.code === 'EROFS' || writeError.code === 'EACCES' || writeError.code === 'ENOENT') {
+      throw new ServerlessWriteError(
+        'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+        'Please update config files manually via Git or use a database for runtime updates. ' +
+        'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+      );
+    }
+    throw writeError;
+  }
 }
 
 // Write social links config
 export async function writeSocialConfig(socials: any[]): Promise<void> {
+  if (await isServerless()) {
+    throw new ServerlessWriteError(
+      'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+      'Please update config files manually via Git or use a database for runtime updates. ' +
+      'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+    );
+  }
+
+  const configDir = path.join(process.cwd(), "config");
+  try {
+    await fs.access(configDir);
+  } catch {
+    await fs.mkdir(configDir, { recursive: true });
+  }
+
   const filePath = path.join(process.cwd(), "config/socials.ts");
   const imports = `import { Icons } from "@/components/common/icons";
 
@@ -268,6 +523,18 @@ ${socialsCode}
 ];
 `;
 
-  await fs.writeFile(filePath, content, "utf-8");
+  // Attempt write with error handling for read-only filesystems
+  try {
+    await fs.writeFile(filePath, content, "utf-8");
+  } catch (writeError: any) {
+    if (writeError.code === 'EROFS' || writeError.code === 'EACCES' || writeError.code === 'ENOENT') {
+      throw new ServerlessWriteError(
+        'SERVERLESS_WRITE_DISABLED: File writes are not supported in production/serverless environments. ' +
+        'Please update config files manually via Git or use a database for runtime updates. ' +
+        'For local development, ensure you are not in a serverless environment or set ALLOW_FILE_WRITES=true if applicable.'
+      );
+    }
+    throw writeError;
+  }
 }
 

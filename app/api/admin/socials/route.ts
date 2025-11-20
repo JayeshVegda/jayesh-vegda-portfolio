@@ -42,6 +42,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Social link added" });
   } catch (error: any) {
+    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
+      return NextResponse.json({ 
+        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
+        code: "SERVERLESS_WRITE_DISABLED"
+      }, { status: 403 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -64,6 +70,12 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Social link updated" });
   } catch (error: any) {
+    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
+      return NextResponse.json({ 
+        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
+        code: "SERVERLESS_WRITE_DISABLED"
+      }, { status: 403 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -92,6 +104,12 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Social link deleted" });
   } catch (error: any) {
+    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
+      return NextResponse.json({ 
+        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
+        code: "SERVERLESS_WRITE_DISABLED"
+      }, { status: 403 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

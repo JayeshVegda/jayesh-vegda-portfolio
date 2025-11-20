@@ -126,7 +126,16 @@ export default function AdminPage() {
         setIsDialogOpen(false);
         await loadAllData();
       } else {
-        setMessage({ text: result.error || "Operation failed", type: "error" });
+        // Check if error is about file writes not being supported
+        const errorMsg = result.error || "Operation failed";
+        if (errorMsg.includes("File writes are not supported")) {
+          setMessage({ 
+            text: "⚠️ File writes are disabled in production. Updates via Git or database required.", 
+            type: "error" 
+          });
+        } else {
+          setMessage({ text: errorMsg, type: "error" });
+        }
       }
     } catch (error: any) {
       setMessage({ text: error.message || "Operation failed", type: "error" });
@@ -243,6 +252,7 @@ export default function AdminPage() {
           </Button>
         </div>
       </header>
+
 
       {/* Message Toast */}
       {message && (

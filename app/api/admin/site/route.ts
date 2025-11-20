@@ -28,6 +28,12 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Site config updated" });
   } catch (error: any) {
+    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
+      return NextResponse.json({ 
+        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
+        code: "SERVERLESS_WRITE_DISABLED"
+      }, { status: 403 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
