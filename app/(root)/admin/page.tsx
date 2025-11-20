@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Trash2, Edit2, Plus, Settings, LogOut, CheckCircle2, XCircle } from "lucide-react";
+import ImageUpload from "@/components/forms/image-upload";
 
 type DataType = "projects" | "experience" | "skills" | "contributions" | "site" | "socials";
 
@@ -559,13 +560,12 @@ function FormContent({ type, data, onSubmit, loading }: any) {
                 />
               </div>
             </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Logo Image Path</label>
-              <Input
-                value={formData.companyLogoImg || ""}
-                onChange={(e) => setFormData({ ...formData, companyLogoImg: e.target.value })}
-              />
-            </div>
+            <ImageUpload
+              value={formData.companyLogoImg || ""}
+              onChange={(url) => setFormData({ ...formData, companyLogoImg: url })}
+              folder="Root/projects"
+              label="Logo Image"
+            />
             <div>
               <label className="text-sm font-medium mb-2 block">Description Paragraphs (one per line)</label>
               <Textarea
@@ -658,14 +658,10 @@ function FormContent({ type, data, onSubmit, loading }: any) {
                 onChange={(e) => setFormData({ ...formData, skills: e.target.value.split(",").map((s: string) => s.trim()) })}
               />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Company URL</label>
                 <Input value={formData.companyUrl || ""} onChange={(e) => setFormData({ ...formData, companyUrl: e.target.value })} />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Logo Path</label>
-                <Input value={formData.logo || ""} onChange={(e) => setFormData({ ...formData, logo: e.target.value })} />
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block">Experience Letter URL</label>
@@ -675,6 +671,12 @@ function FormContent({ type, data, onSubmit, loading }: any) {
                 />
               </div>
             </div>
+            <ImageUpload
+              value={formData.logo || ""}
+              onChange={(url) => setFormData({ ...formData, logo: url })}
+              folder="Root/experience"
+              label="Company Logo"
+            />
           </div>
         );
       case "skills":
