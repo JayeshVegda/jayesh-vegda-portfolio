@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadImageToCloudinary } from '@/lib/cloudinary';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Disable body parsing for file uploads (handled by FormData)
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {

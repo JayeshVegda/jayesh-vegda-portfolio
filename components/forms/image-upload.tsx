@@ -99,9 +99,10 @@ export default function ImageUpload({
         {/* Preview */}
         {preview && (
           <div className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={preview}
-              alt="Preview"
+              alt="Image preview"
               className="w-full h-full object-contain"
             />
             {!disabled && (
