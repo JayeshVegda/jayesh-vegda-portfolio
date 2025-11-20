@@ -53,7 +53,7 @@ export default function ImageUpload({
       };
       reader.readAsDataURL(file);
 
-      // Upload to Cloudinary
+      // Upload to Vercel Blob Storage
       const formData = new FormData();
       formData.append('file', file);
       formData.append('folder', folder);
@@ -69,8 +69,8 @@ export default function ImageUpload({
         throw new Error(data.error || 'Upload failed');
       }
 
-      // Update the value with Cloudinary URL
-      onChange(data.data.secure_url);
+      // Update the value with Blob URL (backwards compatible with secure_url)
+      onChange(data.data.secure_url || data.data.url);
     } catch (err: any) {
       setError(err.message || 'Failed to upload image');
       setPreview(null);
@@ -162,12 +162,12 @@ export default function ImageUpload({
         {/* Current URL Input (for manual entry) */}
         {value && (
           <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Cloudinary URL</Label>
+            <Label className="text-xs text-muted-foreground">Image URL</Label>
             <Input
               value={value}
               onChange={(e) => onChange(e.target.value)}
               disabled={disabled}
-              placeholder="https://res.cloudinary.com/..."
+              placeholder="https://..."
               className="text-xs"
             />
           </div>

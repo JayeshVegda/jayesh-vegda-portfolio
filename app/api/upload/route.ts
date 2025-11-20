@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadImageToCloudinary } from '@/lib/cloudinary';
+import { uploadImageToBlob } from '@/lib/blob';
 
 // Disable body parsing for file uploads (handled by FormData)
 export const runtime = 'nodejs';
@@ -26,16 +26,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // Upload to Vercel Blob Storage
+    const result = await uploadImageToBlob(file, folder);
 
-    // Upload to Cloudinary
-    const result = await uploadImageToCloudinary(buffer, folder);
-
+    // Return response in Cloudinary-compatible format for backwards compatibility
     return NextResponse.json({
       success: true,
-      data: result,
+      data: {
+        public_id: result.pathname,
+        secure_url: result.url,
+        url: result.url,
+        format: result.contentType.split('/')[1] || 'unknown',
+        width: 0, // Vercel Blob doesn't provide dimensions, use Next.js Image for optimization
+        height: 0,
+        bytes: result.size,
+      },
     });
   } catch (error: any) {
     console.error('Upload error:', error);

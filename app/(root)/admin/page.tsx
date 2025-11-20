@@ -39,6 +39,7 @@ export default function AdminPage() {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [writeStatus, setWriteStatus] = useState<{ writable: boolean; message: string } | null>(null);
 
   const loadAllData = useCallback(async () => {
     setLoading(true);
@@ -68,11 +69,28 @@ export default function AdminPage() {
     setLoading(false);
   }, [adminPassword]);
 
+  const checkWriteStatus = useCallback(async () => {
+    if (!adminPassword) return;
+    try {
+      const res = await fetch("/api/admin/status", {
+        headers: { "x-admin-password": adminPassword },
+      });
+      const data = await res.json();
+      setWriteStatus({
+        writable: data.writable || false,
+        message: data.message || "",
+      });
+    } catch (error) {
+      // Silently fail - status check is not critical
+    }
+  }, [adminPassword]);
+
   useEffect(() => {
     if (authenticated && adminPassword) {
       loadAllData();
+      checkWriteStatus();
     }
-  }, [authenticated, adminPassword, loadAllData]);
+  }, [authenticated, adminPassword, loadAllData, checkWriteStatus]);
 
   useEffect(() => {
     if (message) {
@@ -252,6 +270,33 @@ export default function AdminPage() {
           </Button>
         </div>
       </header>
+
+      {/* Read-Only Warning Banner */}
+      {writeStatus && !writeStatus.writable && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-800">
+          <div className="container mx-auto px-6 py-3">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200 mb-1">
+                  Read-Only Mode - File Writes Disabled
+                </h3>
+                <p className="text-sm text-amber-700 dark:text-amber-300 mb-2">
+                  {writeStatus.message}
+                </p>
+                <div className="text-xs text-amber-600 dark:text-amber-400 space-y-1">
+                  <p><strong>To enable writes on Vercel:</strong> Set <code className="bg-amber-100 dark:bg-amber-900/30 px-1 py-0.5 rounded">ALLOW_FILE_WRITES=true</code> in Vercel environment variables (changes won't persist).</p>
+                  <p><strong>Recommended:</strong> Use the admin panel locally, commit changes to Git, then deploy to Vercel.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
 
       {/* Message Toast */}
