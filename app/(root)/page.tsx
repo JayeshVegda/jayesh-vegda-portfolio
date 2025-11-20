@@ -12,16 +12,19 @@ import ExperienceCard from "@/components/experience/experience-card";
 import ProjectCard from "@/components/projects/project-card";
 import HomeSkillsCard from "@/components/skills/home-skills-card";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { featuredContributions } from "@/config/contributions";
-import { experiences } from "@/config/experience";
 import { pagesConfig } from "@/config/pages";
-import { featuredProjects } from "@/config/projects";
 import { siteConfig } from "@/config/site";
-import { coreSkills } from "@/config/skills";
-import { codingStats, achievements } from "@/config/stats";
 import StatsCard from "@/components/stats/stats-card";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/common/icons";
+import { 
+  getFeaturedProjects, 
+  getExperiences, 
+  getCoreSkills, 
+  getFeaturedContributions,
+  getStats,
+  getAchievements
+} from "@/lib/supabase/queries";
 
 export const metadata: Metadata = {
   title: `${pagesConfig.home.metadata.title} | Full Stack Developer Portfolio`,
@@ -31,7 +34,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function IndexPage() {
+// Force dynamic rendering to prevent build-time issues
+export const dynamic = 'force-dynamic';
+
+export default async function IndexPage() {
+  // Fetch all data from Supabase
+  const [featuredProjects, experiences, coreSkills, featuredContributions, codingStats, achievements] = await Promise.all([
+    getFeaturedProjects().catch(() => []),
+    getExperiences().catch(() => []),
+    getCoreSkills().catch(() => []),
+    getFeaturedContributions().catch(() => []),
+    getStats().catch(() => []),
+    getAchievements().catch(() => []),
+  ]);
+
   // Structured data for personal portfolio
   const personSchema = {
     "@context": "https://schema.org",
@@ -90,14 +106,18 @@ export default function IndexPage() {
               {pagesConfig.skills.description}
             </AnimatedText>
           </div>
-          <HomeSkillsCard skills={coreSkills.slice(0, 6)} />
-          <AnimatedText delay={0.4} className="flex justify-center pt-2">
-            <Link href="/skills">
-              <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
-                <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
-              </Button>
-            </Link>
-          </AnimatedText>
+          {coreSkills.length > 0 && (
+            <>
+              <HomeSkillsCard skills={coreSkills.slice(0, 6)} />
+              <AnimatedText delay={0.4} className="flex justify-center pt-2">
+                <Link href="/skills">
+                  <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
+                    <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
+                  </Button>
+                </Link>
+              </AnimatedText>
+            </>
+          )}
         </div>
       </AnimatedSection>
       <AnimatedSection
@@ -121,18 +141,22 @@ export default function IndexPage() {
               {pagesConfig.projects.description}
             </AnimatedText>
           </div>
-          <div className="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
-            {featuredProjects.map((exp, index) => (
-              <ProjectCard key={exp.id} project={exp} index={index} />
-            ))}
-          </div>
-          <AnimatedText delay={0.4} className="flex justify-center pt-2">
-            <Link href="/projects">
-              <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
-                <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
-              </Button>
-            </Link>
-          </AnimatedText>
+          {featuredProjects.length > 0 ? (
+            <>
+              <div className="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
+                {featuredProjects.map((exp, index) => (
+                  <ProjectCard key={exp.id} project={exp} index={index} />
+                ))}
+              </div>
+              <AnimatedText delay={0.4} className="flex justify-center pt-2">
+                <Link href="/projects">
+                  <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
+                    <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
+                  </Button>
+                </Link>
+              </AnimatedText>
+            </>
+          ) : null}
         </div>
       </AnimatedSection>
       <AnimatedSection
@@ -156,16 +180,20 @@ export default function IndexPage() {
               {pagesConfig.contributions.description}
             </AnimatedText>
           </div>
-          <div className="mx-auto w-full">
-            <ContributionCard contributions={featuredContributions} showTechStack={false} />
-          </div>
-          <AnimatedText delay={0.4} className="flex justify-center pt-2">
-            <Link href="/contributions">
-              <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
-                <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
-              </Button>
-            </Link>
-          </AnimatedText>
+          {featuredContributions.length > 0 && (
+            <>
+              <div className="mx-auto w-full">
+                <ContributionCard contributions={featuredContributions} showTechStack={false} />
+              </div>
+              <AnimatedText delay={0.4} className="flex justify-center pt-2">
+                <Link href="/contributions">
+                  <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
+                    <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
+                  </Button>
+                </Link>
+              </AnimatedText>
+            </>
+          )}
         </div>
       </AnimatedSection>
       <AnimatedSection
@@ -189,18 +217,22 @@ export default function IndexPage() {
               {pagesConfig.experience.description}
             </AnimatedText>
           </div>
-          <div className="mx-auto w-full space-y-4 md:space-y-6">
-            {experiences.slice(0, 3).map((experience, index) => (
-              <ExperienceCard key={experience.id} experience={experience} index={index} />
-            ))}
-          </div>
-          <AnimatedText delay={0.4} className="flex justify-center pt-2">
-            <Link href="/experience">
-              <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
-                <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
-              </Button>
-            </Link>
-          </AnimatedText>
+          {experiences.length > 0 && (
+            <>
+              <div className="mx-auto w-full space-y-4 md:space-y-6">
+                {experiences.slice(0, 3).map((experience, index) => (
+                  <ExperienceCard key={experience.id} experience={experience} index={index} />
+                ))}
+              </div>
+              <AnimatedText delay={0.4} className="flex justify-center pt-2">
+                <Link href="/experience">
+                  <Button variant={"outline"} className="rounded-xl text-sm md:text-base">
+                    <Icons.chevronDown className="mr-2 h-4 w-4" /> View All
+                  </Button>
+                </Link>
+              </AnimatedText>
+            </>
+          )}
         </div>
       </AnimatedSection>
       <AnimatedSection
@@ -224,7 +256,9 @@ export default function IndexPage() {
               My coding journey, contributions, and achievements across various platforms.
             </AnimatedText>
           </div>
-          <StatsCard stats={codingStats} achievements={achievements} />
+          {(codingStats.length > 0 || achievements.length > 0) && (
+            <StatsCard stats={codingStats} achievements={achievements} />
+          )}
         </div>
       </AnimatedSection>
     </ClientPageWrapper>

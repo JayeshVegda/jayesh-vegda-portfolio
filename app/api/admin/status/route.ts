@@ -8,26 +8,17 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if file writes are allowed
-    const allowFileWrites = process.env.ALLOW_FILE_WRITES === 'true';
-    const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_URL !== undefined;
-    const isServerless = 
-      process.env.VERCEL === '1' || 
-      process.env.VERCEL_URL !== undefined ||
-      process.env.VERCEL_REGION !== undefined ||
-      process.env.VERCEL_ENV === 'production' ||
-      process.env.VERCEL_ENV === 'preview' ||
-      process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined;
+    // With Supabase, writes are always enabled (no file system dependency)
+    const hasSupabase = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
     return NextResponse.json({
-      writable: !isServerless || allowFileWrites,
-      serverless: isServerless,
-      vercel: isVercel,
-      allowFileWrites,
+      writable: true, // Supabase enables writes in all environments
+      database: 'supabase',
+      hasSupabase,
       environment: process.env.NODE_ENV || 'unknown',
-      message: isServerless && !allowFileWrites
-        ? "Admin panel is read-only in production. Use locally or set ALLOW_FILE_WRITES=true (changes won't persist on Vercel)."
-        : "File writes are enabled",
+      message: hasSupabase 
+        ? "Database writes are enabled via Supabase"
+        : "Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY",
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

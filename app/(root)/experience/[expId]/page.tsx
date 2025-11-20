@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ChipContainer from "@/components/ui/chip-container";
 import { ResponsiveTabs } from "@/components/ui/responsive-tabs";
-import { experiences } from "@/config/experience";
 import { siteConfig } from "@/config/site";
+import { getExperienceById } from "@/lib/supabase/queries";
 
 interface ExperienceDetailPageProps {
   params: {
@@ -35,10 +35,12 @@ const getDurationText = (
   return `${startYear} - ${endYear}`;
 };
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({
   params,
 }: ExperienceDetailPageProps): Promise<Metadata> {
-  const experience = experiences.find((c) => c.id === params.expId);
+  const experience = await getExperienceById(params.expId);
 
   if (!experience) {
     return {
@@ -55,10 +57,10 @@ export async function generateMetadata({
   };
 }
 
-export default function ExperienceDetailPage({
+export default async function ExperienceDetailPage({
   params,
 }: ExperienceDetailPageProps) {
-  const experience = experiences.find((c) => c.id === params.expId);
+  const experience = await getExperienceById(params.expId);
 
   if (!experience) {
     redirect("/experience");

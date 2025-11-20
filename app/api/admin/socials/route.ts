@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminPassword } from "@/lib/admin-utils";
-import { SocialLinks } from "@/config/socials";
-import { writeSocialConfig } from "@/lib/config-writer";
+import { getSocials } from "@/lib/supabase/queries";
+import { createSocial, updateSocial, deleteSocial } from "@/lib/supabase/admin";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,15 +11,18 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Convert icon to string representation
-    // For admin purposes, we'll return the icon as a string that can be edited
-    // The admin should provide icon in format "Icons.gitHub", "Icons.linkedin", etc.
-    const socials = SocialLinks.map((s) => ({
-      ...s,
-      icon: typeof s.icon === "string" ? s.icon : `Icons.${s.name === "Github" ? "gitHub" : s.name === "LinkedIn" ? "linkedin" : s.name === "LeetCode" ? "zap" : s.name === "Gmail" ? "gmail" : "gitHub"}`,
+    const socials = await getSocials();
+    
+    // Transform to match frontend format
+    const formatted = socials.map((s) => ({
+      id: s.id,
+      name: s.name,
+      username: s.username,
+      icon: s.icon_key ? `Icons.${s.icon_key}` : undefined,
+      link: s.link,
     }));
 
-    return NextResponse.json(socials);
+    return NextResponse.json(formatted);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -32,22 +36,22 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await req.json();
-    const currentSocials = SocialLinks.map((s) => ({
-      ...s,
-      icon: typeof s.icon === "string" ? s.icon : `Icons.${s.name === "Github" ? "gitHub" : s.name === "LinkedIn" ? "linkedin" : s.name === "LeetCode" ? "zap" : s.name === "Gmail" ? "gmail" : "gitHub"}`,
-    }));
-
-    const newSocials = [...currentSocials, data];
-    await writeSocialConfig(newSocials);
+    
+    // Extract icon key from "Icons.xxx" format
+    const iconKey = data.icon?.replace('Icons.', '');
+    
+    const socialRow = {
+      name: data.name,
+      username: data.username,
+      icon_key: iconKey,
+      link: data.link,
+      display_order: data.display_order || 0,
+    };
+    
+    await createSocial(socialRow);
 
     return NextResponse.json({ success: true, message: "Social link added" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -59,23 +63,40 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name, ...data } = await req.json();
-    const currentSocials = SocialLinks.map((s) => ({
-      ...s,
-      icon: typeof s.icon === "string" ? s.icon : `Icons.${s.name === "Github" ? "gitHub" : s.name === "LinkedIn" ? "linkedin" : s.name === "LeetCode" ? "zap" : s.name === "Gmail" ? "gmail" : "gitHub"}`,
-    }));
+    const { id, name, ...data } = await req.json();
+    
+    // If id is provided, use it; otherwise find by name
+    let socialId = id;
+    if (!socialId && name) {
+      const { data: social } = await supabaseAdmin
+        .from('socials')
+        .select('id')
+        .eq('name', name)
+        .single();
+      if (social) socialId = social.id;
+    }
 
-    const updatedSocials = currentSocials.map((s) => (s.name === name ? { ...s, ...data, name } : s));
-    await writeSocialConfig(updatedSocials);
+    if (!socialId) {
+      return NextResponse.json({ error: "Social ID or name required" }, { status: 400 });
+    }
+
+    // Extract icon key from "Icons.xxx" format
+    const iconKey = data.icon?.replace('Icons.', '');
+    
+    const socialRow: any = {
+      name: data.name || name,
+      username: data.username,
+      link: data.link,
+    };
+    
+    if (iconKey !== undefined) {
+      socialRow.icon_key = iconKey;
+    }
+    
+    await updateSocial(socialId, socialRow);
 
     return NextResponse.json({ success: true, message: "Social link updated" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -88,28 +109,31 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
     const name = searchParams.get("name");
 
-    if (!name) {
-      return NextResponse.json({ error: "Social link name required" }, { status: 400 });
+    if (!id && !name) {
+      return NextResponse.json({ error: "Social ID or name required" }, { status: 400 });
     }
 
-    const currentSocials = SocialLinks.map((s) => ({
-      ...s,
-      icon: typeof s.icon === "string" ? s.icon : `Icons.${s.name === "Github" ? "gitHub" : s.name === "LinkedIn" ? "linkedin" : s.name === "LeetCode" ? "zap" : s.name === "Gmail" ? "gmail" : "gitHub"}`,
-    }));
+    let socialId = id;
+    if (!socialId && name) {
+      const { data: social } = await supabaseAdmin
+        .from('socials')
+        .select('id')
+        .eq('name', name)
+        .single();
+      if (social) socialId = social.id;
+    }
 
-    const filteredSocials = currentSocials.filter((s) => s.name !== name);
-    await writeSocialConfig(filteredSocials);
+    if (!socialId) {
+      return NextResponse.json({ error: "Social not found" }, { status: 404 });
+    }
+
+    await deleteSocial(socialId);
 
     return NextResponse.json({ success: true, message: "Social link deleted" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

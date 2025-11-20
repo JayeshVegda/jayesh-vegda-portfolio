@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminPassword } from "@/lib/admin-utils";
-import { experiences } from "@/config/experience";
-import { writeExperienceConfig } from "@/lib/config-writer";
+import { getExperiences } from "@/lib/supabase/queries";
+import { createExperience, updateExperience, deleteExperience } from "@/lib/supabase/admin";
+import { experienceToRow } from "@/lib/supabase/transformers";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,6 +11,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const experiences = await getExperiences();
+    
     const experienceData = experiences.map((e) => ({
       ...e,
       startDate: e.startDate.toISOString().split("T")[0],
@@ -30,23 +33,12 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await req.json();
-    const currentExperiences = experiences.map((e) => ({
-      ...e,
-      startDate: e.startDate.toISOString().split("T")[0],
-      endDate: e.endDate === "Present" ? "Present" : e.endDate.toISOString().split("T")[0],
-    }));
-
-    const newExperiences = [...currentExperiences, data];
-    await writeExperienceConfig(newExperiences);
+    const experienceRow = experienceToRow(data);
+    
+    await createExperience(experienceRow);
 
     return NextResponse.json({ success: true, message: "Experience added" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -59,23 +51,12 @@ export async function PUT(req: NextRequest) {
     }
 
     const { id, ...data } = await req.json();
-    const currentExperiences = experiences.map((e) => ({
-      ...e,
-      startDate: e.startDate.toISOString().split("T")[0],
-      endDate: e.endDate === "Present" ? "Present" : e.endDate.toISOString().split("T")[0],
-    }));
-
-    const updatedExperiences = currentExperiences.map((e) => (e.id === id ? { ...e, ...data, id } : e));
-    await writeExperienceConfig(updatedExperiences);
+    const experienceRow = experienceToRow(data);
+    
+    await updateExperience(id, experienceRow);
 
     return NextResponse.json({ success: true, message: "Experience updated" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -94,23 +75,10 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Experience ID required" }, { status: 400 });
     }
 
-    const currentExperiences = experiences.map((e) => ({
-      ...e,
-      startDate: e.startDate.toISOString().split("T")[0],
-      endDate: e.endDate === "Present" ? "Present" : e.endDate.toISOString().split("T")[0],
-    }));
-
-    const filteredExperiences = currentExperiences.filter((e) => e.id !== id);
-    await writeExperienceConfig(filteredExperiences);
+    await deleteExperience(id);
 
     return NextResponse.json({ success: true, message: "Experience deleted" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

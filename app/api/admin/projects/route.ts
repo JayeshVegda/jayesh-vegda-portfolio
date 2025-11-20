@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminPassword } from "@/lib/admin-utils";
-import { Projects } from "@/config/projects";
-import { writeProjectsConfig } from "@/lib/config-writer";
+import { getProjects } from "@/lib/supabase/queries";
+import { createProject, updateProject, deleteProject } from "@/lib/supabase/admin";
+import { projectToRow, rowToProject } from "@/lib/supabase/transformers";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,14 +11,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Convert Date objects to ISO strings for JSON response
-    const projects = Projects.map((p) => ({
+    const projects = await getProjects();
+    
+    // Convert to admin format (with dates as strings)
+    const formattedProjects = projects.map((p) => ({
       ...p,
       startDate: p.startDate.toISOString().split("T")[0],
       endDate: p.endDate.toISOString().split("T")[0],
     }));
 
-    return NextResponse.json(projects);
+    return NextResponse.json(formattedProjects);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -31,23 +34,12 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await req.json();
-    const currentProjects = Projects.map((p) => ({
-      ...p,
-      startDate: p.startDate.toISOString().split("T")[0],
-      endDate: p.endDate.toISOString().split("T")[0],
-    }));
-
-    const newProjects = [...currentProjects, data];
-    await writeProjectsConfig(newProjects);
+    const projectRow = projectToRow(data);
+    
+    await createProject(projectRow);
 
     return NextResponse.json({ success: true, message: "Project added" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -60,23 +52,12 @@ export async function PUT(req: NextRequest) {
     }
 
     const { id, ...data } = await req.json();
-    const currentProjects = Projects.map((p) => ({
-      ...p,
-      startDate: p.startDate.toISOString().split("T")[0],
-      endDate: p.endDate.toISOString().split("T")[0],
-    }));
-
-    const updatedProjects = currentProjects.map((p) => (p.id === id ? { ...p, ...data, id } : p));
-    await writeProjectsConfig(updatedProjects);
+    const projectRow = projectToRow(data);
+    
+    await updateProject(id, projectRow);
 
     return NextResponse.json({ success: true, message: "Project updated" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -95,23 +76,10 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Project ID required" }, { status: 400 });
     }
 
-    const currentProjects = Projects.map((p) => ({
-      ...p,
-      startDate: p.startDate.toISOString().split("T")[0],
-      endDate: p.endDate.toISOString().split("T")[0],
-    }));
-
-    const filteredProjects = currentProjects.filter((p) => p.id !== id);
-    await writeProjectsConfig(filteredProjects);
+    await deleteProject(id);
 
     return NextResponse.json({ success: true, message: "Project deleted" });
   } catch (error: any) {
-    if (error.code === 'SERVERLESS_WRITE_DISABLED' || error.message?.startsWith('SERVERLESS_WRITE_DISABLED')) {
-      return NextResponse.json({ 
-        error: "The admin panel is read-only in production. Please update config files manually via Git or use a database for runtime updates.",
-        code: "SERVERLESS_WRITE_DISABLED"
-      }, { status: 403 });
-    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

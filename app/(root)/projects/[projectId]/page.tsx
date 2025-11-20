@@ -7,9 +7,9 @@ import ProjectDescription from "@/components/projects/project-description";
 import { buttonVariants } from "@/components/ui/button";
 import ChipContainer from "@/components/ui/chip-container";
 import CustomTooltip from "@/components/ui/custom-tooltip";
-import { Projects } from "@/config/projects";
 import { siteConfig } from "@/config/site";
 import { cn, formatDateFromObj } from "@/lib/utils";
+import { getProjectById } from "@/lib/supabase/queries";
 
 interface ProjectPageProps {
   params: {
@@ -19,8 +19,11 @@ interface ProjectPageProps {
 
 const githubUsername = "jayeshvegda";
 
-export default function Project({ params }: ProjectPageProps) {
-  let project = Projects.find((val) => val.id === params.projectId);
+export const dynamic = 'force-dynamic';
+
+export default async function Project({ params }: ProjectPageProps) {
+  const project = await getProjectById(params.projectId);
+  
   if (!project) {
     redirect("/projects");
   }
